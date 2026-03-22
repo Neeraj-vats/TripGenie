@@ -289,6 +289,7 @@ Node.js Backend  ──POST /plan──▶  FastAPI Agent
 
 **Ritish Bansal** — [GitHub](https://github.com/ritishbansal) · [LinkedIn](https://linkedin.com/in/ritishbansal)  
 **Neeraj Vats** — [GitHub](https://github.com/neerajvats) · [LinkedIn](https://linkedin.com/in/neerajvats)
+**Khushi** — [GitHub](https://github.com/neerajvats) · [LinkedIn](https://linkedin.com/in/neerajvats)
 
 B.Tech CSE — Dronacharya College of Engineering, Gurugram (2023–2027)
 
