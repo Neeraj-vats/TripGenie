@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Create Trip - AI Travel Planner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #0f172a;
+  color: white;
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+/* Container */
+.container {
+  width: 800px;
+  background: #1e293b;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* Title */
+.container h1 {
+  margin-bottom: 10px;
+}
+
+.container p {
+  color: #94a3b8;
+  margin-bottom: 25px;
+}
+
+/* Form Layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Input Group */
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-size: 13px;
+  margin-bottom: 5px;
+  color: #cbd5f5;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: #020617;
+  color: white;
+}
+
+/* Full Width */
+.full {
+  grid-column: span 2;
+}
+
+/* Button */
+.btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>Plan Your Trip ✈️   (<%= user.username%>)</h1>
+  <p>Tell us your preferences and let AI create your perfect travel plan</p>
+
+  <form method="POST" action="/trip">
+
+    <input type="hidden" name="userid" value="<%= user._id %>">
+
+    <div class="form-grid">
+
+      <div class="input-group">
+        <label>Destination</label>
+        <input type="text" name="destination" placeholder="e.g. Manali" required>
+      </div>
+
+      <div class="input-group">
+        <label>Number of Days</label>
+        <input type="number" name="days" min="1" placeholder="e.g. 5" required>
+      </div>
+
+      <div class="input-group">
+        <label>Budget (₹)</label>
+        <input type="number" name="budget" placeholder="e.g. 20000" required>
+      </div>
+
+      <div class="input-group">
+        <label>Travel Type</label>
+        <select name="type" required>
+          <option value="">Select</option>
+          <option>Solo</option>
+          <option>Couple</option>
+          <option>Family</option>
+          <option>Friends</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Preferred Transport</label>
+        <select name="transport">
+          <option>Any</option>
+          <option>Flight</option>
+          <option>Train</option>
+          <option>Bus</option>
+          <option>Car</option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Accommodation Type</label>
+        <select name="stay">
+          <option>Budget</option>
+          <option>Standard</option>
+          <option>Luxury</option>
+        </select>
+      </div>
+
+      <div class="input-group full">
+        <label>Preferred Activities</label>
+        <input type="text" name="activities" placeholder="e.g. Adventure, Sightseeing, Relaxation">
+      </div>
+
+      <div class="input-group full">
+        <label>Additional Preferences</label>
+        <textarea name="extra" rows="3" placeholder="Any special requests or notes..."></textarea>
+      </div>
+
+    </div>
+
+    <button type="submit" class="btn">✨ Generate My Trip</button>
+
+  </form>
+
+</div>
+
+</body>
+</html>

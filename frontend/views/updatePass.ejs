@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reset Password - AI Travel Planner</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  height: 100vh;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card */
+.container {
+  width: 420px;
+  padding: 40px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(15px);
+  color: white;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+/* Title */
+.container h2 {
+  margin-bottom: 10px;
+}
+
+.container p {
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 25px;
+}
+
+/* Input */
+.input-box {
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.input-box label {
+  font-size: 13px;
+  color: #ddd;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-box input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+/* Strength */
+.strength {
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* Button */
+.btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 25px;
+  border: none;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+/* Error */
+.error {
+  color: #ff6b6b;
+  font-size: 12px;
+  display: none;
+  margin-top: 5px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h2>Reset Password</h2>
+  <p>Create a new secure password for your account</p>
+
+  <form method="POST" action="/resetpass/<%=userid%>" id="resetForm">
+
+    <!-- New Password -->
+    <div class="input-box">
+      <label>New Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter new password" required>
+      <div class="strength" id="strengthText"></div>
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="input-box">
+      <label>Confirm Password</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required>
+      <div class="error" id="errorMsg">Passwords do not match</div>
+    </div>
+
+    <button type="submit" class="btn">Update Password</button>
+
+  </form>
+
+</div>
+
+<script>
+const password = document.getElementById("password");
+const confirmPassword = document.getElementById("confirmPassword");
+const errorMsg = document.getElementById("errorMsg");
+const strengthText = document.getElementById("strengthText");
+const form = document.getElementById("resetForm");
+
+/* Password Strength */
+password.addEventListener("input", () => {
+  const val = password.value;
+
+  if (val.length < 3) {
+    strengthText.textContent = "Weak password";
+    strengthText.style.color = "red";
+  } else if (val.length < 7) {
+    strengthText.textContent = "Medium strength";
+    strengthText.style.color = "orange";
+  } else {
+    strengthText.textContent = "Strong password";
+    strengthText.style.color = "lightgreen";
+  }
+});
+
+/* Validation */
+form.addEventListener("submit", function(e) {
+  if (password.value !== confirmPassword.value) {
+    e.preventDefault();
+    errorMsg.style.display = "block";
+  } else {
+    errorMsg.style.display = "none";
+  }
+});
+</script>
+
+</body>
+</html>
