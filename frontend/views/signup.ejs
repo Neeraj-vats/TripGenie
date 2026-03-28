@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1f4037, #99f2c8);
+    }
+
+    .container {
+      width: 380px;
+      background: rgba(255,255,255,0.95);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #222;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      font-size: 13px;
+      color: #444;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+      transition: 0.3s ease;
+    }
+
+    .input-group input:focus {
+      border-color: #1f4037;
+      box-shadow: 0 0 6px rgba(31,64,55,0.4);
+    }
+
+    .password-strength {
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .options {
+      font-size: 12px;
+      margin-bottom: 15px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: #1f4037;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background: #16302a;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .footer a {
+      color: #1f4037;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .error {
+      color: red;
+      font-size: 12px;
+      display: none;
+    }
+
+    .err{
+background:linear-gradient(180deg, rgba(255,230,225,0.95), rgba(255,245,240,0.95));
+border-left:4px solid #e07a6a;padding:0.8rem;border-radius:8px;color:#8a2b1b;font-size:0.95rem;
+}
+.err ul{
+  margin:0;
+  padding-left:1.1rem; 
+}
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Create Account</h2>
+
+    <form action="/signup" method="POST" novalidate id="signupForm">
+
+        <% if (errors && errors.length > 0) { %>
+            <div class="err" role="alert">
+              <ul>
+                <% errors.forEach(error => { %>
+                  <li><%= error %></li>
+                <% }) %>
+              </ul>
+            </div>
+          <% } %>
+
+      <div style="display:flex; gap:10px;">
+        <div class="input-group" style="flex:1;">
+          <label>First Name</label>
+          <input type="text" id="firstName" name="fname" placeholder="First name" required>
+        </div>
+
+        <div class="input-group" style="flex:1;">
+          <label>Last Name</label>
+          <input type="text" id="lastName" name="lname" placeholder="Last name" required>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" id="username" name="username" placeholder="Choose a username" required>
+        <div class="error" id="usernameError">Username must be at least 3 characters</div>
+      </div>
+
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        <div class="error" id="emailError">Invalid email</div>
+      </div>
+
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="password" name="password" placeholder="Create password" required>
+        <div class="password-strength" id="strengthText"></div>
+      </div>
+
+      <div class="input-group">
+        <label>Confirm Password</label>
+        <input type="password" id="confirmPassword" placeholder="Confirm password" required>
+        <div class="error" id="confirmError">Passwords do not match</div>
+      </div>
+
+      <div class="options">
+        <label><input type="checkbox" required> I agree to Terms & Conditions</label>
+      </div>
+
+      <button type="submit" class="btn">Sign Up</button>
+
+    </form>
+
+    <div class="footer">
+      Already have an account? <a href="#">Login</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('signupForm');
+
+    const passwordInput = document.getElementById('password');
+    const strengthText = document.getElementById('strengthText');
+
+    passwordInput.addEventListener('input', () => {
+      const value = passwordInput.value;
+
+      if (value.length < 6) {
+        strengthText.textContent = "Weak password";
+        strengthText.style.color = "red";
+      } else if (value.length < 10) {
+        strengthText.textContent = "Medium strength";
+        strengthText.style.color = "orange";
+      } else {
+        strengthText.textContent = "Strong password";
+        strengthText.style.color = "green";
+      }
+    });
+
+      let valid = true;
+
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (username.length < 3) {
+        document.getElementById('usernameError').style.display = 'block';
+        valid = false;
+      } else {
+        document.getElementById('usernameError').style.display = 'none';
+      }
+
+      if (!email.includes('@')) {
+        document.getElementById('emailError').style.display = 'block';
+        valid = false;
+      } else {
+        document.getElementById('emailError').style.display = 'none';
+      }
+
+      if (password !== confirmPassword) {
+        document.getElementById('confirmError').style.display = 'block';
+        valid = false;
+      } else {
+        document.getElementById('confirmError').style.display = 'none';
+      }
+
+      // if (valid) {
+      //   alert("Account Created Successfully!");
+      // }
+    ;
+  </script>
+
+</body>
+</html>
