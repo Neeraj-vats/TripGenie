@@ -12,14 +12,40 @@ exports.gettripinput = async (data) => {
 }
 
 exports.trip = async (data) => {
+    // AI trip generation can take 1-2 minutes on NIM free tier
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5 * 60 * 1000);
+
     const response = await fetch("http://localhost:2376/api/generatetrip", {
-        method: "POST", 
+        method: "POST",
         headers: {
-            "Content-Type":"application/json"
+            "Content-Type": "application/json",
         },
-        body:JSON.stringify(data)
+        body: JSON.stringify(data),
+        signal: controller.signal,
     });
+    clearTimeout(timeoutId);
 
     const result = await response.json();
     return result;
-}
+};
+
+exports.listTrips = async (userid) => {
+    const response = await fetch(
+        `http://localhost:2376/api/trips/${encodeURIComponent(userid)}`
+    );
+    const result = await response.json();
+    return result.trips || [];
+};
+
+exports.getTrip = async (tripId, userid) => {
+    const q = new URLSearchParams({ userid: String(userid) });
+    const response = await fetch(
+        `http://localhost:2376/api/trip/${encodeURIComponent(tripId)}?${q}`
+    );
+    if (!response.ok) {
+        return null;
+    }
+    const result = await response.json();
+    return result.trip || null;
+};

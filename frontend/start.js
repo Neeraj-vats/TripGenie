@@ -95,7 +95,38 @@ app.post("/trip", async (req, res, next) => {
     const data = req.body;
     console.log("data of trip is", data);
     const result = await tripServices.trip(data);
-})
+    if (result && result.success) {
+        return res.redirect(`/myplans/${encodeURIComponent(data.userid)}`);
+    }
+    return res.status(502).send(
+        `We could not generate your plan. ${result?.error || "Unknown error"}`
+    );
+});
+
+app.get("/myplans/:userid", async (req, res, next) => {
+    try {
+        const trips = await tripServices.listTrips(req.params.userid);
+        res.render("myplans", {
+            trips,
+            userid: req.params.userid,
+        });
+    } catch (e) {
+        console.error(e);
+        res.status(500).send("Could not load your trips.");
+    }
+});
+
+app.get("/tripview/:tripId", async (req, res, next) => {
+    const { userid } = req.query;
+    if (!userid) {
+        return res.status(400).send("Missing userid.");
+    }
+    const trip = await tripServices.getTrip(req.params.tripId, userid);
+    if (!trip) {
+        return res.status(404).send("Trip not found.");
+    }
+    res.render("tripdetail", { trip, userid });
+});
 
 const PORT = 9876;
 app.listen(PORT, () => {

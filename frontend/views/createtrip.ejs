@@ -103,6 +103,9 @@ body {
 
   <h1>Plan Your Trip ✈️   (<%= user.username%>)</h1>
   <p>Tell us your preferences and let AI create your perfect travel plan</p>
+  <p style="margin-top:8px;font-size:14px;">
+    <a href="/myplans/<%= user._id %>" style="color:#38bdf8;">View your saved AI plans →</a>
+  </p>
 
   <form method="POST" action="/trip">
 
