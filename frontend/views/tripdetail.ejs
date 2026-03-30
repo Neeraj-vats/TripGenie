@@ -163,9 +163,14 @@ body {
   <div class="content" id="planContent"></div>
 </div>
 
+<script type="application/json" id="planRaw">
+<%- JSON.stringify(typeof trip.final_trip_plan === 'string' ? trip.final_trip_plan : JSON.stringify(trip.final_trip_plan, null, 2)) %>
+</script>
+
 <script>
-  const raw = `<%- typeof trip.final_trip_plan === 'string' ? trip.final_trip_plan.replace(/`/g, '\\`') : JSON.stringify(trip.final_trip_plan, null, 2) %>`;
-  document.getElementById('planContent').innerHTML = marked.parse(raw);
+  const rawJsonEl = document.getElementById('planRaw');
+  const raw = rawJsonEl ? JSON.parse(rawJsonEl.textContent || '""') : "";
+  document.getElementById('planContent').innerHTML = marked.parse(String(raw || ""));
 </script>
 </body>
 </html>
