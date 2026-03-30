@@ -26,8 +26,21 @@ const requireLogin = (req, res, next) => {
     next();
 };
 
-app.get("/", requireLogin, (req, res) => {
-    res.render("home", {user: req.session.user});
+app.get("/", requireLogin, async (req, res) => {
+    try {
+        // 1. Session se user id lekar trips mangwayein
+        const trips = await tripServices.listTrips(req.session.user._id);
+        
+        // 2. Render karte waqt user aur trips dono bhejein
+        res.render("home", { 
+            user: req.session.user, 
+            trips: trips || [] 
+        });
+    } catch (error) {
+        console.error("Dashboard Error:", error);
+        // Error aaye tab bhi page crash na ho, isliye khali array bhejein
+        res.render("home", { user: req.session.user, trips: [] });
+    }
 });
 
 app.get("/login", (req, res) => {
@@ -51,11 +64,18 @@ app.post("/signup", async (req, res) => {
 
 app.post("/login", async (req, res) => {
     const result = await authServices.postLogin(req.body);
+    
     if (result.status === false) {
         res.render('login', {errors: ["User doesn't exist!"]});
     } else if(result.status === true) {
-        req.session.user = result.user; // Session mein save karo
-        res.render("home", {user: result.user});
+        req.session.user = result.user;
+
+        const trips = await tripServices.listTrips(result.user._id);
+        
+        res.render("home", { 
+            user: result.user, 
+            trips: trips || [] 
+        });
     } else {
         res.render("login", {errors: ["Password Invalid"]});
     }
