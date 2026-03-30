@@ -5,8 +5,9 @@
 <title>AI plan — <%= trip.destination %></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
 :root{
   --bg0:#050816;
   --bg1:#0b1226;
@@ -18,6 +19,7 @@
   --accent:#38bdf8;
   --accent2:#818cf8;
   --shadow: 0 24px 60px rgba(0,0,0,.48);
+  --shadowSoft: 0 10px 30px rgba(2,6,23,.35);
 }
 body {
   background:
@@ -34,6 +36,13 @@ body {
 @keyframes floatIn {
   from { opacity: 0; transform: translateY(10px); filter: blur(6px); }
   to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 14px;
 }
 
 .topbar{
@@ -125,6 +134,11 @@ body {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
+.card:hover{
+  border-color: rgba(56,189,248,.28);
+  box-shadow: var(--shadowSoft);
+  transition: box-shadow .18s ease, border-color .18s ease;
+}
 .metaCard{
   padding: 18px 20px;
 }
@@ -134,6 +148,25 @@ body {
   line-height: 1.7;
 }
 .summary strong{ color: var(--text); font-weight: 600; }
+
+.chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top: 10px;
+}
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,.22);
+  background: rgba(2,6,23,.22);
+  color: var(--muted);
+  font-size: .84rem;
+}
+.chip strong{ color: var(--text); font-weight: 600; }
 
 .contentCard{
   margin-top: 14px;
@@ -153,17 +186,113 @@ body {
   font-size: .92rem;
   color: var(--muted);
 }
-.content{
-  padding: 18px 18px 22px;
-  background: rgba(30,41,59,.34);
+
+.sectionTitle{
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: .2px;
+  color: var(--text);
+}
+.subtle{
+  color: var(--muted);
+  font-size: .9rem;
+  line-height: 1.7;
+}
+
+.dayGrid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(30,41,59,.22);
+}
+.dayCard{
+  border-radius: 16px;
+  border: 1px solid rgba(148,163,184,.20);
+  background: rgba(2,6,23,.18);
+  padding: 14px 14px 16px;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+.dayCard:hover{
+  transform: translateY(-2px);
+  border-color: rgba(56,189,248,.38);
+  background: rgba(2,6,23,.26);
+}
+.dayHead{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom: 10px;
+}
+.dayHead h3{
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.places{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:flex-end;
+}
+.placeTag{
+  font-size: .78rem;
+  color: rgba(226,232,240,.92);
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,.18);
+  background: rgba(30,41,59,.24);
+}
+.slots{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+.slot{
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(148,163,184,.16);
+  background: rgba(30,41,59,.18);
+}
+.slotLabel{
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: rgba(148,163,184,.95);
+  margin-bottom: 6px;
+}
+.slotText{
+  font-size: .95rem;
+  line-height: 1.7;
+  color: rgba(226,232,240,.96);
+}
+.slotText ul{ margin-left: 18px; }
+
+.otherBlock{
+  padding: 16px;
+  background: rgba(30,41,59,.22);
+}
+.otherText{
   white-space: pre-wrap;
   word-break: break-word;
   line-height: 1.75;
   font-size: 0.95rem;
+  color: rgba(226,232,240,.96);
 }
-.content code, .content pre{
+.otherText code, .otherText pre{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
+
+.hiddenRaw{
+  position:absolute;
+  left:-9999px;
+  top:auto;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+}
+
 .toast{
   position: fixed;
   left: 50%;
@@ -221,6 +350,10 @@ body {
       </div>
       <% if (trip.activities) { %><div>Activities: <%= trip.activities %></div><% } %>
       <% if (trip.extra) { %><div>Notes: <%= trip.extra %></div><% } %>
+      <div class="chips" aria-label="Preferences chips">
+        <% if (trip.activities) { %><div class="chip">Theme: <strong><%= trip.activities %></strong></div><% } %>
+        <% if (trip.extra) { %><div class="chip">Extra: <strong><%= trip.extra %></strong></div><% } %>
+      </div>
     </div>
   </section>
 
@@ -228,10 +361,12 @@ body {
     <div class="contentHeader">
       <div class="title">Generated itinerary</div>
       <div style="display:flex; gap:10px; align-items:center;">
-        <span style="color: var(--muted); font-size:.85rem;">Tip: scroll to read</span>
+        <span style="color: var(--muted); font-size:.85rem;">Auto-formatted for readability</span>
       </div>
     </div>
-    <div class="content" id="planText"><%= typeof trip.final_trip_plan === 'string' ? trip.final_trip_plan : JSON.stringify(trip.final_trip_plan, null, 2) %></div>
+    <!-- Keep raw plan text hidden; render a clean layout with JS -->
+    <textarea class="hiddenRaw" id="planRaw" readonly><%= typeof trip.final_trip_plan === 'string' ? trip.final_trip_plan : JSON.stringify(trip.final_trip_plan, null, 2) %></textarea>
+    <div id="planRender" class="grid"></div>
   </section>
 </div>
 
@@ -240,9 +375,10 @@ body {
 <script>
   (function () {
     const btn = document.getElementById('copyBtn');
-    const plan = document.getElementById('planText');
+    const rawEl = document.getElementById('planRaw');
+    const mount = document.getElementById('planRender');
     const toast = document.getElementById('toast');
-    if (!btn || !plan) return;
+    if (!btn || !rawEl || !mount) return;
 
     function showToast(text) {
       if (!toast) return;
@@ -252,10 +388,162 @@ body {
       showToast._t = window.setTimeout(() => toast.classList.remove('show'), 1400);
     }
 
+    function cleanMarkdown(text) {
+      if (!text) return '';
+      return String(text)
+        // remove heading markers like "### "
+        .replace(/^\s*#{1,6}\s+/gm, '')
+        // remove common bullet markers "* " and "- "
+        .replace(/^\s*[\*\-]\s+/gm, '• ')
+        // remove bold markers
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        // remove stray leading "*" characters
+        .replace(/^\s*\*+\s*/gm, '')
+        // remove markdown code fences/backticks
+        .replace(/```+/g, '')
+        .replace(/`+/g, '')
+        .trim();
+    }
+
+    function splitIntoDays(lines) {
+      const dayIdx = [];
+      for (let i = 0; i < lines.length; i++) {
+        if (/^\s*day\s*\d+\b/i.test(lines[i])) dayIdx.push(i);
+      }
+      if (dayIdx.length === 0) return { summary: lines, days: [], rest: [] };
+      const summary = lines.slice(0, dayIdx[0]).filter(Boolean);
+      const days = [];
+      for (let d = 0; d < dayIdx.length; d++) {
+        const start = dayIdx[d];
+        const end = d + 1 < dayIdx.length ? dayIdx[d + 1] : lines.length;
+        const block = lines.slice(start, end).filter(Boolean);
+        days.push(block);
+      }
+      const used = new Set();
+      for (const idx of dayIdx) used.add(idx);
+      const rest = [];
+      for (let i = 0; i < lines.length; i++) {
+        if (i < dayIdx[0]) continue;
+        // already part of a day block (we will compute rest after days)
+      }
+      return { summary, days, rest: [] };
+    }
+
+    function parseSlots(blockLines) {
+      const block = blockLines.join('\n');
+      const out = { morning: '', afternoon: '', evening: '', places: [] };
+
+      function grab(label, nextLabel) {
+        const re = new RegExp(`(^|\\n)\\s*${label}\\s*[:\\-]?\\s*([\\s\\S]*?)(?=\\n\\s*${nextLabel}\\s*[:\\-]?\\s*|$)`, 'i');
+        const m = block.match(re);
+        return m ? m[2].trim() : '';
+      }
+
+      out.morning = grab('morning', 'afternoon');
+      out.afternoon = grab('afternoon', 'evening');
+      out.evening = grab('evening', '(places|notes|budget|cost|day\\s*\\d+)');
+
+      // Try to find "places:" line
+      const placesLine = blockLines.find(l => /^\s*places?\s*[:\-]/i.test(l));
+      if (placesLine) {
+        const v = placesLine.replace(/^\s*places?\s*[:\-]\s*/i, '').trim();
+        out.places = v
+          .split(/,|\u2022|•/g)
+          .map(s => s.trim())
+          .filter(Boolean)
+          .slice(0, 8);
+      }
+
+      return out;
+    }
+
+    function el(tag, attrs, children) {
+      const n = document.createElement(tag);
+      if (attrs) {
+        for (const [k, v] of Object.entries(attrs)) {
+          if (k === 'class') n.className = v;
+          else if (k === 'text') n.textContent = v;
+          else n.setAttribute(k, v);
+        }
+      }
+      if (children) {
+        for (const c of children) n.appendChild(c);
+      }
+      return n;
+    }
+
+    function render(rawText) {
+      const cleaned = cleanMarkdown(rawText);
+      const lines = cleaned.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      const { summary, days } = splitIntoDays(lines);
+
+      // Summary section
+      if (summary.length > 0) {
+        const summaryCard = el('div', { class: 'dayGrid' }, [
+          el('div', { class: 'subtle', text: 'Quick notes from the plan' })
+        ]);
+        summaryCard.appendChild(el('div', { class: 'otherText', text: summary.join('\n') }));
+        mount.appendChild(summaryCard);
+      }
+
+      // Day cards
+      if (days.length > 0) {
+        const daysWrap = el('div', { class: 'dayGrid' });
+        for (const blockLines of days) {
+          const head = blockLines[0] || 'Day';
+          const m = head.match(/day\s*(\d+)/i);
+          const dayNo = m ? m[1] : '';
+
+          const slots = parseSlots(blockLines.slice(1));
+          const placesTags = (slots.places || []).map(p => el('span', { class: 'placeTag', text: p }));
+
+          const slotNodes = [];
+          const addSlot = (label, text) => {
+            if (!text) return;
+            slotNodes.push(
+              el('div', { class: 'slot' }, [
+                el('div', { class: 'slotLabel', text: label }),
+                el('div', { class: 'slotText', text })
+              ])
+            );
+          };
+          addSlot('Morning', slots.morning);
+          addSlot('Afternoon', slots.afternoon);
+          addSlot('Evening', slots.evening);
+
+          // If no structured slots found, show the raw block.
+          const fallback = slotNodes.length === 0
+            ? el('div', { class: 'otherText', text: blockLines.slice(1).join('\n') })
+            : el('div', { class: 'slots' }, slotNodes);
+
+          const card = el('article', { class: 'dayCard' }, [
+            el('div', { class: 'dayHead' }, [
+              el('h3', { text: dayNo ? `Day ${dayNo}` : head }),
+              el('div', { class: 'places' }, placesTags)
+            ]),
+            fallback
+          ]);
+          daysWrap.appendChild(card);
+        }
+        mount.appendChild(daysWrap);
+      } else {
+        // No "Day N" found, just show the whole cleaned text.
+        mount.appendChild(
+          el('div', { class: 'otherBlock' }, [
+            el('div', { class: 'otherText', text: cleaned })
+          ])
+        );
+      }
+
+      return cleaned;
+    }
+
+    const rawText = rawEl.value || '';
+    const cleanedForCopy = render(rawText);
+
     btn.addEventListener('click', async () => {
-      const text = plan.innerText || plan.textContent || '';
       try {
-        await navigator.clipboard.writeText(text);
+        await navigator.clipboard.writeText(cleanedForCopy);
         showToast('Copied to clipboard');
       } catch (e) {
         showToast('Copy failed — select and copy manually');
