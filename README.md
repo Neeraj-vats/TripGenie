@@ -40,8 +40,8 @@ File template exists here:
 - `ai-agent/.env.example`
 
 Example:
-```env
-NVIDIA_API_KEY=nvapi-your-key-here
+```.env
+MISTRAL=mistral-api-key
 ```
 
 ## Start everything (3 terminals)
@@ -52,7 +52,7 @@ Start order matters: **AI service → backend → frontend**
 cd "C:\Users\neera\Downloads\SynopsisPro\SynopsisPro\ai-agent"
 
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1 or just activate 
 
 pip install -r requirements.txt
 
@@ -364,7 +364,7 @@ Node.js Backend  ──POST /plan──▶  FastAPI Agent
 
 **Input:** `Manali | 5 days | ₹20,000 | Solo`
 
-| Day | Highlights |
+| Day | Highlights |just an example dont take it too literally 
 |-----|-----------|
 | Day 1 | Arrival → Zostel check-in (₹500) → Old Manali market → Café Bob |
 | Day 2 | Solang Valley → ropeway (₹300) → paragliding → dhaba dinner |
