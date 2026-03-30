@@ -1,3 +1,107 @@
+# SynopsisPro — Travel AI Planner
+
+An AI trip-planning web app built with:
+- **Frontend (EJS)**: Node/Express UI for login + trip form + viewing plans
+- **Backend (Node/Express + MongoDB)**: saves generated trips and serves them to the UI
+- **AI Agent (Python/FastAPI + Google ADK)**: orchestrates a multi-step itinerary pipeline using LiteLLM to call **NVIDIA NIM DeepSeek**
+
+## How it connects (high level)
+1. User submits the trip form in the frontend.
+2. The **Node backend** calls the **AI service**: `POST http://127.0.0.1:8000/plan`
+3. The AI service runs `root_agent` (Sequential + Parallel planners), then returns `final_trip_plan`
+4. Backend stores the plan in MongoDB and the frontend shows it in `/myplans/:userid` and `/tripview/:tripId`
+
+## Services & ports
+- **AI Service (FastAPI)**: `http://127.0.0.1:8000`
+  - `GET  /health`
+  - `POST /plan`
+- **Node Backend (API)**: `http://localhost:2376`
+  - Trip generation: `POST /api/generatetrip`
+  - List plans: `GET  /api/trips/:userid`
+  - View plan: `GET  /api/trip/:tripId`
+- **Frontend (EJS)**: `http://localhost:9876`
+  - Create trip: `/` (form submits to `/trip`)
+  - View plans: `/myplans/:userid`
+  - View one plan: `/tripview/:tripId`
+
+## Prerequisites
+- Node.js installed
+- Python 3.10+ (this repo uses Python 3.13 in your environment)
+- MongoDB Atlas reachable from the backend machine (credentials live in `backend/utils/databaseUtil.js`)
+
+## API keys (important)
+Never hardcode keys in code.
+
+### DeepSeek (NVIDIA NIM) key
+Put your key in:
+- `ai-agent/.env`
+
+File template exists here:
+- `ai-agent/.env.example`
+
+Example:
+```env
+NVIDIA_API_KEY=nvapi-your-key-here
+```
+
+## Start everything (3 terminals)
+Start order matters: **AI service → backend → frontend**
+
+### Terminal 1: AI agent (FastAPI)
+```powershell
+cd "C:\Users\neera\Downloads\SynopsisPro\SynopsisPro\ai-agent"
+
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+pip install -r requirements.txt
+
+# If you didn't already set up ai-agent\.env:
+$env:PYTHONUTF8="1"
+$env:NVIDIA_API_KEY="nvapi-your-key-here"
+
+uvicorn main:app --host 127.0.0.1 --port 8000
+```
+
+Verify:
+- Open `http://127.0.0.1:8000/health`
+
+### Terminal 2: Node backend (2376)
+```powershell
+cd "C:\Users\neera\Downloads\SynopsisPro\SynopsisPro\backend"
+npm install
+npm start
+```
+
+Optional (only if AI service runs somewhere else):
+```powershell
+$env:TRIP_PLANNER_URL="http://127.0.0.1:8000/plan"
+```
+
+### Terminal 3: Frontend (9876)
+```powershell
+cd "C:\Users\neera\Downloads\SynopsisPro\SynopsisPro\frontend"
+npm install
+node start.js
+```
+
+Then open:
+- `http://localhost:9876`
+
+## If trip generation fails
+- If the AI server won’t start: run `uvicorn main:app ...` and check it can import `google.adk.models.lite_llm` (install `ai-agent/requirements.txt`).
+- If backend shows `502` or “Planner error”: confirm AI server is running on port `8000` and reachable at `/health`.
+- If you get `KeyError: NVIDIA_API_KEY`: set `ai-agent/.env` or `$env:NVIDIA_API_KEY` before starting uvicorn.
+- If Mongo fails: fix connectivity/credentials in `backend/utils/databaseUtil.js`.
+
+## Folder overview
+```text
+SynopsisPro/
+  ai-agent/     # Python FastAPI + ADK agents + DEEPSEEK model config
+  backend/      # Node/Express API + MongoDB persistence
+  frontend/     # Node/Express + EJS UI
+```
+
 # 🌍 TripGenie — AI-Powered Travel Planner
 
 > Plan a 5-day trip to Manali under ₹20,000 in one prompt.  
