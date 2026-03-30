@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
+const session = require("express-session");
 const authServices = require("./services/authApi");
 const tripServices = require("./services/tripApi");
 const path = require("path");
-
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -12,120 +12,111 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get("/", (req, res, next) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Session setup
+app.use(session({
+    secret: 'tripgenie-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 24 * 60 * 60 * 1000 } // 1 din
+}));
+
+// Auth middleware
+const requireLogin = (req, res, next) => {
+    if (!req.session.user) return res.redirect('/login');
+    next();
+};
+
+app.get("/", requireLogin, (req, res) => {
+    res.render("home", {user: req.session.user});
 });
 
-app.get("/login", (req, res, next) => {
+app.get("/login", (req, res) => {
     res.render("login", {errors: []});
 });
 
-app.get("/signup", (req, res, next) => {
+app.get("/signup", (req, res) => {
     res.render("signup", {errors: []});
 });
 
-app.post("/signup", async (req, res, next) => {
-    const data = req.body;
-    console.log("Data is", data);
-    const result = await authServices.postsignup(data);
+app.post("/signup", async (req, res) => {
+    const result = await authServices.postsignup(req.body);
     if (result.status === false) {
         res.render("signup", {errors: ["Email already registered!"]})
     } else if(result.status === true) {
-    res.render("login", {errors:[]});
+        res.render("login", {errors:[]});
     } else if(result.message === 'username already exists') {
         res.render("signup", {errors: ['Username already exists']});
     }
 });
 
-app.post("/login", async (req, res, next) => {
-    const data = req.body;
-    console.log("Login data is", data);
-    const result = await authServices.postLogin(data);
-    console.log("Logged in successfully", result.status);
-    if (result.status === false ){
-        res.render('login', {errors: ["User doesn't exists!"]});
-    } else if(result.status === true ) {
-        console.log("user loggedin is ", result.user)
+app.post("/login", async (req, res) => {
+    const result = await authServices.postLogin(req.body);
+    if (result.status === false) {
+        res.render('login', {errors: ["User doesn't exist!"]});
+    } else if(result.status === true) {
+        req.session.user = result.user; // Session mein save karo
         res.render("home", {user: result.user});
     } else {
         res.render("login", {errors: ["Password Invalid"]});
     }
 });
 
-// app.get("/logout", async (req, res, next) => {
-//     const result = await authServices.logout();
-//     res.redirect("/");
-// });
-
-app.get("/forget", (req, res, next) => {
+app.get("/forget", (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'forget.html'));
 });
 
-app.post("/forget", async (req, res, next) => {
-    const data = req.body;
-    const result = await authServices.email(data);
+app.post("/forget", async (req, res) => {
+    const result = await authServices.email(req.body);
     res.render('otp', {userid:result.id});
 });
 
-app.post("/otp/:id", async (req, res, next) => {
-    const id = req.params.id;
-    const data = req.body;
-    const result = await authServices.otp(data);
-    if(result.status == true ){
-        res.render('updatePass', {userid: id});
+app.post("/otp/:id", async (req, res) => {
+    const result = await authServices.otp(req.body);
+    if(result.status == true) {
+        res.render('updatePass', {userid: req.params.id});
     } else {
         res.sendFile(path.join(__dirname, 'public', 'otpinvalid.html'));
     }
 });
 
-app.post("/resetpass/:id", async (req, res, next) => {
-    const id = req.params.id;
-    const data = req.body;
-    const result = await authServices.update(id, data);
+app.post("/resetpass/:id", async (req, res) => {
+    await authServices.update(req.params.id, req.body);
     res.render("login", {errors:[]});
 });
 
-app.post("/gettripinput", async (req, res, next) => {
-    const data = req.body;
-    const result = await tripServices.gettripinput(data);
+app.post("/gettripinput", requireLogin, async (req, res) => {
+    const result = await tripServices.gettripinput(req.body);
     res.render("createtrip", {user: result.user});
 });
 
-app.post("/trip", async (req, res, next) => {
-    const data = req.body;
-    console.log("data of trip is", data);
-    const result = await tripServices.trip(data);
+app.post("/trip", requireLogin, async (req, res) => {
+    const result = await tripServices.trip(req.body);
     if (result && result.success) {
-        return res.redirect(`/myplans/${encodeURIComponent(data.userid)}`);
+        return res.redirect(`/myplans/${encodeURIComponent(req.body.userid)}`);
     }
-    return res.status(502).send(
-        `We could not generate your plan. ${result?.error || "Unknown error"}`
-    );
+    return res.status(502).send(`We could not generate your plan. ${result?.error || "Unknown error"}`);
 });
 
-app.get("/myplans/:userid", async (req, res, next) => {
+app.get("/myplans/:userid", requireLogin, async (req, res) => {
     try {
         const trips = await tripServices.listTrips(req.params.userid);
-        res.render("myplans", {
-            trips,
-            userid: req.params.userid,
-        });
+        res.render("myplans", { trips, userid: req.params.userid });
     } catch (e) {
-        console.error(e);
         res.status(500).send("Could not load your trips.");
     }
 });
 
-app.get("/tripview/:tripId", async (req, res, next) => {
+app.get("/tripview/:tripId", requireLogin, async (req, res) => {
     const { userid } = req.query;
-    if (!userid) {
-        return res.status(400).send("Missing userid.");
-    }
+    if (!userid) return res.status(400).send("Missing userid.");
     const trip = await tripServices.getTrip(req.params.tripId, userid);
-    if (!trip) {
-        return res.status(404).send("Trip not found.");
-    }
+    if (!trip) return res.status(404).send("Trip not found.");
     res.render("tripdetail", { trip, userid });
+});
+
+app.get("/logout", (req, res) => {
+    req.session.destroy();
+    res.redirect('/login');
 });
 
 const PORT = 9876;
