@@ -1,160 +1,457 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>OTP Verification - AI Travel Planner</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>OTP Verification — Voyager AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
+    :root {
+      --green: #2C5F3F;
+      --green-dark: #1e4530;
+      --green-light: #EDF4EF;
+      --green-border: #C2D9C9;
+      --cream: #F7F5F0;
+      --cream-border: #E8E6E0;
+      --card-bg: #FAFAF8;
+      --text-primary: #1a1a18;
+      --text-muted: #666;
+      --text-hint: #999;
+      --white: #ffffff;
+      --error: #A32D2D;
+      --error-bg: #FCEBEB;
+      --error-border: #F09595;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+      --radius-sm: 7px;
+      --radius-md: 10px;
+    }
 
-body {
-  height: 100vh;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    body {
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      background: var(--cream);
+      -webkit-font-smoothing: antialiased;
+    }
 
-/* Card */
-.container {
-  width: 420px;
-  padding: 40px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(15px);
-  color: white;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-}
+    /* ── Left panel ── */
+    .left-panel {
+      display: none;
+      flex: 1;
+      background: var(--green);
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 64px 56px;
+      position: relative;
+      overflow: hidden;
+    }
 
-/* Title */
-.container h2 {
-  margin-bottom: 10px;
-}
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      width: 360px; height: 360px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+      top: -80px; right: -80px;
+    }
 
-.container p {
-  font-size: 14px;
-  color: #ccc;
-  margin-bottom: 25px;
-}
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.06);
+      bottom: 40px; left: -60px;
+    }
 
-/* OTP Input */
-.input-box {
-  margin-bottom: 20px;
-}
+    .panel-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 64px;
+      position: relative;
+      z-index: 1;
+    }
 
-.input-box input {
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  outline: none;
-  font-size: 22px;
-  text-align: center;
-  letter-spacing: 10px;
-}
+    .panel-logo-mark {
+      width: 34px; height: 34px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
 
-/* Button */
-.btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 25px;
-  border: none;
-  background: linear-gradient(135deg, #00c6ff, #0072ff);
-  color: white;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.3s;
-}
+    .panel-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 3vw, 46px);
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
 
-.btn:hover {
-  transform: scale(1.05);
-}
+    .panel-headline em {
+      font-style: italic;
+      color: rgba(255,255,255,0.7);
+    }
 
-/* Error */
-.error {
-  color: #ff6b6b;
-  font-size: 13px;
-  display: none;
-  margin-bottom: 10px;
-}
+    .panel-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.65;
+      max-width: 340px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 48px;
+    }
 
-/* Resend */
-.resend {
-  margin-top: 15px;
-  font-size: 13px;
-  color: #aaa;
-  cursor: pointer;
-}
+    .panel-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      z-index: 1;
+    }
 
-.resend:hover {
-  color: white;
-}
-</style>
+    .panel-step {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .step-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .step-num.active {
+      background: rgba(255,255,255,0.25);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .step-lbl {
+      font-size: 14px;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .step-lbl.active {
+      color: var(--white);
+      font-weight: 500;
+    }
+
+    /* ── Right panel ── */
+    .right-panel {
+      flex: 0 0 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 48px 24px;
+      background: var(--white);
+    }
+
+    .form-wrap {
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeUp 0.45s ease forwards;
+    }
+
+    /* Mobile logo */
+    .mobile-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 36px;
+      justify-content: center;
+    }
+
+    .mobile-logo-mark {
+      width: 32px; height: 32px;
+      background: var(--green);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    /* Icon circle */
+    .otp-icon {
+      width: 64px; height: 64px;
+      background: var(--green-light);
+      border: 1px solid var(--green-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin: 0 auto 24px;
+    }
+
+    .form-title {
+      font-family: var(--font-serif);
+      font-size: 30px;
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    /* OTP input box */
+    .input-box {
+      margin-bottom: 8px;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 14px;
+      border: 1.5px solid var(--cream-border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      font-size: 26px;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 14px;
+      color: var(--text-primary);
+      background: var(--card-bg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-box input::placeholder {
+      letter-spacing: 10px;
+      color: #CCC;
+      font-weight: 400;
+    }
+
+    .input-box input:hover { border-color: #D0CEC8; }
+
+    .input-box input:focus {
+      border-color: var(--green);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(44,95,63,0.1);
+    }
+
+    /* Error — original ID preserved */
+    .error {
+      color: var(--error);
+      font-size: 12px;
+      display: none;
+      margin-bottom: 16px;
+      text-align: left;
+      background: var(--error-bg);
+      border-left: 3px solid var(--error-border);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+    }
+
+    /* Submit button */
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--green);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: -0.1px;
+      margin-top: 8px;
+    }
+
+    .btn:hover { background: var(--green-dark); }
+    .btn:active { transform: scale(0.99); }
+
+    /* Resend — original class preserved */
+    .resend {
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--text-hint);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .resend:hover { color: var(--green); }
+
+    .resend span {
+      color: var(--green);
+      font-weight: 500;
+    }
+
+    /* Back link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: var(--text-hint);
+      text-decoration: none;
+      margin-top: 14px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover { color: var(--text-muted); }
+
+    /* Animation */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Desktop layout ── */
+    @media (min-width: 768px) {
+      .left-panel { display: flex; }
+      .right-panel { flex: 0 0 480px; padding: 56px 52px; }
+      .mobile-logo { display: none; }
+    }
+
+    @media (min-width: 1100px) {
+      .right-panel { flex: 0 0 520px; }
+    }
+
+    @media (max-width: 400px) {
+      .input-box input { font-size: 22px; letter-spacing: 10px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="container">
-
-  <h2>Verify OTP</h2>
-  <p>Enter the 6-digit code sent to your email</p>
-
-  <form method="POST" action="/otp/<%=userid%>" id="otpForm">
-
-    <div class="input-box">
-      <input 
-        type="text" 
-        name="otp" 
-        id="otp" 
-        maxlength="6" 
-        minlength="6"
-        pattern="\d{6}" 
-        placeholder="••••••" 
-        required>
+  <!-- Left decorative panel (desktop only) -->
+  <div class="left-panel">
+    <div class="panel-logo">
+      <div class="panel-logo-mark">✈</div>
+      Voyager AI
     </div>
 
-    <div class="error" id="errorMsg">
-      Please enter a valid 6-digit OTP
+    <h1 class="panel-headline">
+      Almost there,<br><em>one last step.</em>
+    </h1>
+
+    <p class="panel-sub">
+      We sent a verification code to your email to keep your account safe and secure.
+    </p>
+
+    <div class="panel-steps">
+      <div class="panel-step">
+        <div class="step-num">1</div>
+        <div class="step-lbl">Create your account</div>
+      </div>
+      <div class="panel-step">
+        <div class="step-num">2</div>
+        <div class="step-lbl">Verify your email</div>
+      </div>
+      <div class="panel-step">
+        <div class="step-num active">3</div>
+        <div class="step-lbl active">Enter OTP &amp; get started</div>
+      </div>
     </div>
+  </div>
 
-    <button type="submit" class="btn">Verify</button>
+  <!-- Right form panel -->
+  <div class="right-panel">
+    <div class="form-wrap">
 
-  </form>
+      <!-- Mobile logo -->
+      <div class="mobile-logo">
+        <div class="mobile-logo-mark">✈</div>
+        Voyager AI
+      </div>
 
-  <div class="resend">Resend Code</div>
+      <div class="otp-icon">📬</div>
 
-</div>
+      <h2 class="form-title">Verify your email</h2>
+      <p class="form-subtitle">Enter the 6-digit code sent to your email address.</p>
 
-<script>
-const form = document.getElementById("otpForm");
-const otpInput = document.getElementById("otp");
-const errorMsg = document.getElementById("errorMsg");
+      <!-- Backend logic unchanged — action, method, name, id all preserved -->
+      <form method="POST" action="/otp/<%=userid%>" id="otpForm">
 
-// Allow only numbers
-otpInput.addEventListener("input", () => {
-  otpInput.value = otpInput.value.replace(/\D/g, "");
-});
+        <div class="input-box">
+          <input
+            type="text"
+            name="otp"
+            id="otp"
+            maxlength="6"
+            minlength="6"
+            pattern="\d{6}"
+            placeholder="••••••"
+            required>
+        </div>
 
-form.addEventListener("submit", function(e) {
-  const otp = otpInput.value;
+        <div class="error" id="errorMsg">
+          Please enter a valid 6-digit OTP.
+        </div>
 
-  if (otp.length !== 6) {
-    e.preventDefault();
-    errorMsg.style.display = "block";
-  } else {
-    errorMsg.style.display = "none";
-  }
-});
-</script>
+        <button type="submit" class="btn">Verify &amp; continue</button>
+
+      </form>
+
+      <div class="resend">Didn't receive a code? <span>Resend</span></div>
+
+      <a href="/signup" class="back-link">← Back to sign up</a>
+
+    </div>
+  </div>
+
+  <!-- Original JS logic — unchanged -->
+  <script>
+    const form = document.getElementById("otpForm");
+    const otpInput = document.getElementById("otp");
+    const errorMsg = document.getElementById("errorMsg");
+
+    // Allow only numbers
+    otpInput.addEventListener("input", () => {
+      otpInput.value = otpInput.value.replace(/\D/g, "");
+    });
+
+    form.addEventListener("submit", function(e) {
+      const otp = otpInput.value;
+
+      if (otp.length !== 6) {
+        e.preventDefault();
+        errorMsg.style.display = "block";
+      } else {
+        errorMsg.style.display = "none";
+      }
+    });
+  </script>
 
 </body>
 </html>

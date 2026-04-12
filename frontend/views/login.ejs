@@ -3,163 +3,460 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <title>Login — Voyager AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green: #2C5F3F;
+      --green-dark: #1e4530;
+      --green-light: #EDF4EF;
+      --green-border: #C2D9C9;
+      --cream: #F7F5F0;
+      --cream-border: #E8E6E0;
+      --card-bg: #FAFAF8;
+      --text-primary: #1a1a18;
+      --text-muted: #666;
+      --text-hint: #999;
+      --white: #ffffff;
+      --error: #A32D2D;
+      --error-bg: #FCEBEB;
+      --error-border: #F09595;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+      --radius-sm: 7px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
     }
 
     body {
-      height: 100vh;
+      font-family: var(--font-sans);
+      min-height: 100vh;
       display: flex;
+      background: var(--cream);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Left panel ── */
+    .left-panel {
+      display: none;
+      flex: 1;
+      background: var(--green);
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 64px 56px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+      top: -80px;
+      right: -80px;
+    }
+
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.06);
+      bottom: 40px;
+      left: -60px;
+    }
+
+    .panel-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 64px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-logo-mark {
+      width: 34px;
+      height: 34px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .panel-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 3.5vw, 48px);
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-headline em {
+      font-style: italic;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .panel-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.65;
+      max-width: 340px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 48px;
+    }
+
+    .panel-stats {
+      display: flex;
+      gap: 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-stat-num {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .panel-stat-lbl {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 2px;
+    }
+
+    /* ── Right panel / form ── */
+    .right-panel {
+      flex: 0 0 100%;
+      display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      padding: 40px 24px;
+      background: var(--white);
     }
 
-    .container {
-      width: 350px;
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    .form-wrap {
+      width: 100%;
+      max-width: 400px;
     }
 
-    .container h2 {
-      text-align: center;
+    /* Mobile logo */
+    .mobile-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 36px;
+      justify-content: center;
+    }
+
+    .mobile-logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--green);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    .form-title {
+      font-family: var(--font-serif);
+      font-size: 30px;
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    /* Error alert — keeps original EJS template */
+    .err {
+      background: var(--error-bg);
+      border-left: 3px solid var(--error-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
       margin-bottom: 20px;
-      color: #333;
+      color: var(--error);
+      font-size: 13px;
     }
 
+    .err ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+
+    /* Input group */
     .input-group {
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     .input-group label {
-      font-size: 14px;
-      color: #555;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
       display: block;
-      margin-bottom: 5px;
+      margin-bottom: 7px;
     }
 
     .input-group input {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      padding: 11px 14px;
+      border: 1.5px solid var(--cream-border);
+      border-radius: var(--radius-sm);
       outline: none;
-      transition: 0.3s;
+      font-size: 14px;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      background: var(--card-bg);
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
+
+    .input-group input::placeholder { color: var(--text-hint); }
+
+    .input-group input:hover { border-color: #D0CEC8; }
 
     .input-group input:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 5px rgba(102,126,234,0.5);
+      border-color: var(--green);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(44,95,63,0.1);
     }
 
+    /* Inline error — original IDs preserved */
+    .error {
+      color: var(--error);
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    /* Options row */
     .options {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 13px;
-      margin-bottom: 15px;
+      margin-bottom: 22px;
+      color: var(--text-muted);
+    }
+
+    .options label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .options input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--green);
+      cursor: pointer;
     }
 
     .options a {
       text-decoration: none;
-      color: #667eea;
+      color: var(--green);
+      font-weight: 500;
+      font-size: 13px;
+      transition: color 0.2s;
     }
 
+    .options a:hover { color: var(--green-dark); }
+
+    /* Submit button */
     .btn {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       border: none;
-      border-radius: 8px;
-      background: #667eea;
-      color: #fff;
-      font-size: 16px;
+      border-radius: var(--radius-sm);
+      background: var(--green);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 500;
+      font-family: var(--font-sans);
       cursor: pointer;
-      transition: 0.3s;
+      transition: background 0.2s;
+      letter-spacing: -0.1px;
     }
 
-    .btn:hover {
-      background: #5a67d8;
-    }
+    .btn:hover { background: var(--green-dark); }
+    .btn:active { transform: scale(0.99); }
 
+    /* Footer link */
     .footer {
       text-align: center;
-      margin-top: 15px;
+      margin-top: 22px;
       font-size: 14px;
+      color: var(--text-muted);
     }
 
     .footer a {
-      color: #667eea;
+      color: var(--green);
       text-decoration: none;
       font-weight: 500;
     }
 
-    .error {
-      color: red;
-      font-size: 13px;
-      margin-top: 5px;
-      display: none;
+    .footer a:hover { color: var(--green-dark); }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0;
+      color: var(--text-hint);
+      font-size: 12px;
     }
 
-    .err{
-background:linear-gradient(180deg, rgba(255,230,225,0.95), rgba(255,245,240,0.95));
-border-left:4px solid #e07a6a;padding:0.8rem;border-radius:8px;color:#8a2b1b;font-size:0.95rem;
-}
-.err ul{
-  margin:0;
-  padding-left:1.1rem; 
-}
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--cream-border);
+    }
+
+    /* ── Desktop layout ── */
+    @media (min-width: 768px) {
+      .left-panel { display: flex; }
+      .right-panel { flex: 0 0 480px; padding: 56px 48px; }
+      .mobile-logo { display: none; }
+    }
+
+    @media (min-width: 1100px) {
+      .right-panel { flex: 0 0 520px; }
+    }
+
+    /* ── Fade-in ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-wrap {
+      animation: fadeUp 0.45s ease forwards;
+    }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h2>Login</h2>
+  <!-- Left decorative panel (desktop only) -->
+  <div class="left-panel">
+    <div class="panel-logo">
+      <div class="panel-logo-mark">✈</div>
+      Voyager AI
+    </div>
 
-    <form id="loginForm" action="/login" method="POST" novalidate>
+    <h1 class="panel-headline">
+      Travel smarter,<br><em>not harder.</em>
+    </h1>
 
-        <% if (errors && errors.length > 0) { %>
-            <div class="err" role="alert">
-              <ul>
-                <% errors.forEach(error => { %>
-                  <li><%= error %></li>
-                <% }) %>
-              </ul>
-            </div>
-          <% } %>
+    <p class="panel-sub">
+      Plan complete, personalized trips in seconds. Itineraries, budgets, routes — all powered by AI.
+    </p>
 
-      <div class="input-group">
-        <label>Email</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
-        <div class="error" id="emailError">Invalid email</div>
+    <div class="panel-stats">
+      <div>
+        <div class="panel-stat-num">2.4M+</div>
+        <div class="panel-stat-lbl">Trips planned</div>
       </div>
-
-      <div class="input-group">
-        <label>Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required>
-        <div class="error" id="passwordError">Password must be at least 6 characters</div>
+      <div>
+        <div class="panel-stat-num">180+</div>
+        <div class="panel-stat-lbl">Countries</div>
       </div>
-
-      <div class="options">
-        <label><input type="checkbox"> Remember me</label>
-        <a href="/forget">Forgot password?</a>
+      <div>
+        <div class="panel-stat-num">4.9 ★</div>
+        <div class="panel-stat-lbl">Rating</div>
       </div>
-
-      <button type="submit" class="btn">Login</button>
-    </form>
-
-    <div class="footer">
-      Don't have an account? <a href="/signup">Sign up</a>
     </div>
   </div>
 
+  <!-- Right form panel -->
+  <div class="right-panel">
+    <div class="form-wrap">
+
+      <!-- Mobile logo -->
+      <div class="mobile-logo">
+        <div class="mobile-logo-mark">✈</div>
+        Voyager AI
+      </div>
+
+      <h2 class="form-title">Welcome back</h2>
+      <p class="form-subtitle">Log in to continue planning your next adventure.</p>
+
+      <form id="loginForm" action="/login" method="POST" novalidate>
+
+        <!-- Server-side errors (EJS) — markup unchanged -->
+        <% if (errors && errors.length > 0) { %>
+          <div class="err" role="alert">
+            <ul>
+              <% errors.forEach(error => { %>
+                <li><%= error %></li>
+              <% }) %>
+            </ul>
+          </div>
+        <% } %>
+
+        <div class="input-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required>
+          <div class="error" id="emailError">Please enter a valid email address.</div>
+        </div>
+
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+          <div class="error" id="passwordError">Password must be at least 6 characters.</div>
+        </div>
+
+        <div class="options">
+          <label><input type="checkbox"> Remember me</label>
+          <a href="/forget">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn">Log in</button>
+
+      </form>
+
+      <div class="footer">
+        Don't have an account? <a href="/signup">Sign up free</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Original JS logic — unchanged -->
   <script>
     const form = document.getElementById('loginForm');
 
@@ -188,7 +485,7 @@ border-left:4px solid #e07a6a;padding:0.8rem;border-radius:8px;color:#8a2b1b;fon
       }
 
       if (valid) {
-        
+        // original submit logic here
       }
     });
   </script>

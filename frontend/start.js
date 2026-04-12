@@ -4,7 +4,6 @@ const authServices = require("./services/authApi");
 const tripServices = require("./services/tripApi");
 const path = require("path");
 
-
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 

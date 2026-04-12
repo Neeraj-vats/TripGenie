@@ -1,0 +1,14 @@
+# Core API framework
+fastapi==0.115.0
+uvicorn[standard]==0.34.0
+pydantic>=2.0
+
+# AI / LLM clients
+openai>=1.0
+httpx>=0.24
+
+# Google ADK (agent framework)
+google-adk[extensions]==1.0.0
+
+# Environment & config
+python-dotenv>=1.0

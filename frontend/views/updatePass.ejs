@@ -1,168 +1,429 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Reset Password - AI Travel Planner</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Reset Password — Voyager AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
+    :root {
+      --green: #2C5F3F;
+      --green-dark: #1e4530;
+      --green-light: #EDF4EF;
+      --green-border: #C2D9C9;
+      --cream: #F7F5F0;
+      --cream-border: #E8E6E0;
+      --card-bg: #FAFAF8;
+      --text-primary: #1a1a18;
+      --text-muted: #666;
+      --text-hint: #999;
+      --white: #ffffff;
+      --error: #A32D2D;
+      --error-bg: #FCEBEB;
+      --error-border: #F09595;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+      --radius-sm: 7px;
+      --radius-md: 10px;
+    }
 
-body {
-  height: 100vh;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+    body {
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      background: var(--cream);
+      -webkit-font-smoothing: antialiased;
+    }
 
-/* Card */
-.container {
-  width: 420px;
-  padding: 40px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(15px);
-  color: white;
-  text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-}
+    /* ── Left panel ── */
+    .left-panel {
+      display: none;
+      flex: 1;
+      background: var(--green);
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 64px 56px;
+      position: relative;
+      overflow: hidden;
+    }
 
-/* Title */
-.container h2 {
-  margin-bottom: 10px;
-}
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      width: 360px; height: 360px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.08);
+      top: -80px; right: -80px;
+    }
 
-.container p {
-  font-size: 14px;
-  color: #ccc;
-  margin-bottom: 25px;
-}
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.06);
+      bottom: 40px; left: -60px;
+    }
 
-/* Input */
-.input-box {
-  margin-bottom: 18px;
-  text-align: left;
-}
+    .panel-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 64px;
+      position: relative;
+      z-index: 1;
+    }
 
-.input-box label {
-  font-size: 13px;
-  color: #ddd;
-  display: block;
-  margin-bottom: 5px;
-}
+    .panel-logo-mark {
+      width: 34px; height: 34px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
 
-.input-box input {
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  font-size: 14px;
-}
+    .panel-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(30px, 3vw, 46px);
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
 
-/* Strength */
-.strength {
-  font-size: 12px;
-  margin-top: 5px;
-}
+    .panel-headline em {
+      font-style: italic;
+      color: rgba(255,255,255,0.7);
+    }
 
-/* Button */
-.btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 25px;
-  border: none;
-  background: linear-gradient(135deg, #00c6ff, #0072ff);
-  color: white;
-  font-size: 15px;
-  cursor: pointer;
-  transition: 0.3s;
-}
+    .panel-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.65;
+      max-width: 340px;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 48px;
+    }
 
-.btn:hover {
-  transform: scale(1.05);
-}
+    .panel-tips {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+    }
 
-/* Error */
-.error {
-  color: #ff6b6b;
-  font-size: 12px;
-  display: none;
-  margin-top: 5px;
-}
-</style>
+    .panel-tip {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.5;
+    }
+
+    .tip-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    /* ── Right panel ── */
+    .right-panel {
+      flex: 0 0 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 48px 24px;
+      background: var(--white);
+    }
+
+    .form-wrap {
+      width: 100%;
+      max-width: 400px;
+      animation: fadeUp 0.45s ease forwards;
+    }
+
+    /* Mobile logo */
+    .mobile-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 36px;
+      justify-content: center;
+    }
+
+    .mobile-logo-mark {
+      width: 32px; height: 32px;
+      background: var(--green);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    /* Icon circle */
+    .form-icon {
+      width: 64px; height: 64px;
+      background: var(--green-light);
+      border: 1px solid var(--green-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin: 0 auto 24px;
+    }
+
+    .form-title {
+      font-family: var(--font-serif);
+      font-size: 30px;
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+      text-align: center;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    /* Input box — original class preserved */
+    .input-box {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .input-box label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--cream-border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      font-size: 14px;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      background: var(--card-bg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .input-box input::placeholder { color: var(--text-hint); }
+    .input-box input:hover { border-color: #D0CEC8; }
+    .input-box input:focus {
+      border-color: var(--green);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(44,95,63,0.1);
+    }
+
+    /* Strength — original id preserved */
+    .strength {
+      font-size: 12px;
+      margin-top: 6px;
+      font-weight: 500;
+      min-height: 16px;
+    }
+
+    /* Error — original id & display:none preserved */
+    .error {
+      color: var(--error);
+      font-size: 12px;
+      display: none;
+      margin-top: 6px;
+      background: var(--error-bg);
+      border-left: 3px solid var(--error-border);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+    }
+
+    /* Submit button */
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--green);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: -0.1px;
+      margin-top: 4px;
+    }
+
+    .btn:hover { background: var(--green-dark); }
+    .btn:active { transform: scale(0.99); }
+
+    /* Back link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      color: var(--text-hint);
+      text-decoration: none;
+      margin-top: 18px;
+      transition: color 0.2s;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .back-link:hover { color: var(--text-muted); }
+
+    /* Animation */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Desktop layout ── */
+    @media (min-width: 768px) {
+      .left-panel { display: flex; }
+      .right-panel { flex: 0 0 480px; padding: 56px 52px; }
+      .mobile-logo { display: none; }
+    }
+
+    @media (min-width: 1100px) {
+      .right-panel { flex: 0 0 520px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="container">
-
-  <h2>Reset Password</h2>
-  <p>Create a new secure password for your account</p>
-
-  <form method="POST" action="/resetpass/<%=userid%>" id="resetForm">
-
-    <!-- New Password -->
-    <div class="input-box">
-      <label>New Password</label>
-      <input type="password" id="password" name="password" placeholder="Enter new password" required>
-      <div class="strength" id="strengthText"></div>
+  <!-- Left decorative panel (desktop only) -->
+  <div class="left-panel">
+    <div class="panel-logo">
+      <div class="panel-logo-mark">✈</div>
+      Voyager AI
     </div>
 
-    <!-- Confirm Password -->
-    <div class="input-box">
-      <label>Confirm Password</label>
-      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required>
-      <div class="error" id="errorMsg">Passwords do not match</div>
+    <h1 class="panel-headline">
+      Secure your<br><em>account.</em>
+    </h1>
+
+    <p class="panel-sub">
+      Choose a strong new password to keep your travel plans and personal data protected.
+    </p>
+
+    <div class="panel-tips">
+      <div class="panel-tip"><span class="tip-dot"></span> Use at least 8 characters</div>
+      <div class="panel-tip"><span class="tip-dot"></span> Mix uppercase, lowercase &amp; numbers</div>
+      <div class="panel-tip"><span class="tip-dot"></span> Avoid reusing old passwords</div>
+      <div class="panel-tip"><span class="tip-dot"></span> Never share your password with anyone</div>
     </div>
+  </div>
 
-    <button type="submit" class="btn">Update Password</button>
+  <!-- Right form panel -->
+  <div class="right-panel">
+    <div class="form-wrap">
 
-  </form>
+      <!-- Mobile logo -->
+      <div class="mobile-logo">
+        <div class="mobile-logo-mark">✈</div>
+        Voyager AI
+      </div>
 
-</div>
+      <div class="form-icon">🔒</div>
 
-<script>
-const password = document.getElementById("password");
-const confirmPassword = document.getElementById("confirmPassword");
-const errorMsg = document.getElementById("errorMsg");
-const strengthText = document.getElementById("strengthText");
-const form = document.getElementById("resetForm");
+      <h2 class="form-title">Reset your password</h2>
+      <p class="form-subtitle">Create a new secure password for your account.</p>
 
-/* Password Strength */
-password.addEventListener("input", () => {
-  const val = password.value;
+      <!-- Backend logic unchanged — action, method, ids, names all preserved -->
+      <form method="POST" action="/resetpass/<%=userid%>" id="resetForm">
 
-  if (val.length < 3) {
-    strengthText.textContent = "Weak password";
-    strengthText.style.color = "red";
-  } else if (val.length < 7) {
-    strengthText.textContent = "Medium strength";
-    strengthText.style.color = "orange";
-  } else {
-    strengthText.textContent = "Strong password";
-    strengthText.style.color = "lightgreen";
-  }
-});
+        <!-- New Password -->
+        <div class="input-box">
+          <label for="password">New password</label>
+          <input type="password" id="password" name="password" placeholder="Enter new password" required>
+          <div class="strength" id="strengthText"></div>
+        </div>
 
-/* Validation */
-form.addEventListener("submit", function(e) {
-  if (password.value !== confirmPassword.value) {
-    e.preventDefault();
-    errorMsg.style.display = "block";
-  } else {
-    errorMsg.style.display = "none";
-  }
-});
-</script>
+        <!-- Confirm Password -->
+        <div class="input-box">
+          <label for="confirmPassword">Confirm password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+          <div class="error" id="errorMsg">Passwords do not match.</div>
+        </div>
+
+        <button type="submit" class="btn">Update password</button>
+
+      </form>
+
+      <a href="/login" class="back-link">← Back to log in</a>
+
+    </div>
+  </div>
+
+  <!-- Original JS logic — unchanged -->
+  <script>
+    const password = document.getElementById("password");
+    const confirmPassword = document.getElementById("confirmPassword");
+    const errorMsg = document.getElementById("errorMsg");
+    const strengthText = document.getElementById("strengthText");
+    const form = document.getElementById("resetForm");
+
+    /* Password Strength */
+    password.addEventListener("input", () => {
+      const val = password.value;
+
+      if (val.length < 3) {
+        strengthText.textContent = "Weak password";
+        strengthText.style.color = "red";
+      } else if (val.length < 7) {
+        strengthText.textContent = "Medium strength";
+        strengthText.style.color = "orange";
+      } else {
+        strengthText.textContent = "Strong password";
+        strengthText.style.color = "green";
+      }
+    });
+
+    /* Validation */
+    form.addEventListener("submit", function(e) {
+      if (password.value !== confirmPassword.value) {
+        e.preventDefault();
+        errorMsg.style.display = "block";
+      } else {
+        errorMsg.style.display = "none";
+      }
+    });
+  </script>
 
 </body>
 </html>
