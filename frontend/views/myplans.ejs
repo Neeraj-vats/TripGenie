@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My AI trip plans</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+body {
+  background: #0f172a;
+  color: #f8fafc;
+  min-height: 100vh;
+  padding: 32px;
+}
+.wrap { max-width: 900px; margin: 0 auto; }
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+header h1 { font-size: 1.6rem; font-weight: 600; }
+header p { color: #94a3b8; font-size: 0.95rem; margin-top: 6px; }
+.nav a {
+  display: inline-block;
+  margin-left: 12px;
+  color: #38bdf8;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.nav a:hover { text-decoration: underline; }
+.cards { display: flex; flex-direction: column; gap: 14px; }
+.card {
+  background: #1e293b;
+  border-radius: 16px;
+  padding: 20px 22px;
+  border: 1px solid #334155;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: #0ea5e9; }
+.card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+}
+.meta {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+.card a.cta {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+  color: white;
+  text-decoration: none;
+  font-size: 0.88rem;
+}
+.empty {
+  background: #1e93bb33;
+  border: 1px dashed #38bdf8;
+  border-radius: 16px;
+  padding: 28px;
+  text-align: center;
+  color: #cbd5e1;
+}
+.empty strong { color: #f8fafc; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Your AI trip plans</h1>
+      <p>Open any plan to read the full itinerary generated for you.</p>
+    </div>
+    <div class="nav">
+      <a href="/">Home</a>
+      <a href="#" onclick="history.back(); return false;">Back</a>
+    </div>
+  </header>
+
+  <% if (!trips || trips.length === 0) { %>
+    <div class="empty">
+      <p><strong>No plans yet.</strong></p>
+      <p style="margin-top:10px;">Create a trip from your dashboard and generate a plan first.</p>
+    </div>
+  <% } else { %>
+    <div class="cards">
+      <% trips.forEach(function (trip) { %>
+        <article class="card">
+          <h2><%= trip.destination %></h2>
+          <div class="meta">
+            <%= trip.days %> days · Budget ₹<%= trip.budget %> · <%= trip.type %><br>
+            Transport: <%= trip.transport %> · Stay: <%= trip.stay %><br>
+            <% if (trip.createdAt) { %>
+              Planned: <%= new Date(trip.createdAt).toLocaleString() %>
+            <% } %>
+          </div>
+          <a class="cta" href="/tripview/<%= trip._id %>?userid=<%= encodeURIComponent(userid) %>">View full AI plan</a>
+        </article>
+      <% }); %>
+    </div>
+  <% } %>
+</div>
+</body>
+</html>
