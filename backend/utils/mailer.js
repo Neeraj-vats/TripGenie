@@ -15,7 +15,7 @@ const sendEmail = async (to, subject, mess) => {
             from: "<>",
             to: to,
             subject: subject,
-            html: mess
+            html: mess // this is email sender
         });
         console.log("EMail send successfully");
     } catch (err) {
@@ -23,4 +23,4 @@ const sendEmail = async (to, subject, mess) => {
     }
 }
 
-module.exports = sendEmail;   //first commit
+module.exports = sendEmail;   //ssecond commit
