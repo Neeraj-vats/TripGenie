@@ -49,3 +49,12 @@ exports.getTrip = async (tripId, userid) => {
     const result = await response.json();
     return result.trip || null;
 };
+
+exports.backtohome = async (id) => {
+    const response = await fetch(`http://localhost:2376/api/backtohome/${id}`, {
+        method: "GET"
+    })
+     
+    const result = await response.json();
+    return result;
+}

@@ -124,3 +124,8 @@ exports.trip = async (req, res, next) => {
         });
     }
 };
+
+exports.backtohome = async (req, res, next) => {
+    const tripid = req.params.id;
+    console.log("trip id in backend", tripid);
+}

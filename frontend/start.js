@@ -127,6 +127,13 @@ app.get("/tripview/:tripId", async (req, res, next) => {
     res.render("tripdetail", { trip, userid });
 });
 
+app.get("/back/:id", async (req, res, next) => {
+    const tripid = req.params.id;
+    console.log("trip id in frontend", tripid);
+    const result = await tripServices.backtohome(tripid);
+
+})
+
 const PORT = 9876;
 app.listen(PORT, () => {
     console.log(`Server running on address http://localhost:${PORT}`);
