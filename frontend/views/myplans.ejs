@@ -1,137 +1,758 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>My AI trip plans</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-body {
-  background: #0f172a;
-  color: #f8fafc;
-  min-height: 100vh;
-  padding: 32px;
-}
-.wrap { max-width: 900px; margin: 0 auto; }
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 28px;
-  flex-wrap: wrap;
-}
-header h1 { font-size: 1.6rem; font-weight: 600; }
-header p { color: #94a3b8; font-size: 0.95rem; margin-top: 6px; }
-.nav a {
-  display: inline-block;
-  margin-left: 12px;
-  color: #38bdf8;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-.nav a:hover { text-decoration: underline; }
-.cards { display: flex; flex-direction: column; gap: 14px; }
-.card {
-  background: #1e293b;
-  border-radius: 16px;
-  padding: 20px 22px;
-  border: 1px solid #334155;
-  transition: border-color 0.2s;
-}
-.card:hover { border-color: #0ea5e9; }
-.card h2 {
-  font-size: 1.15rem;
-  margin-bottom: 8px;
-}
-.meta {
-  color: #94a3b8;
-  font-size: 0.85rem;
-  line-height: 1.5;
-}
-.card a.cta {
-  display: inline-block;
-  margin-top: 14px;
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #00c6ff, #0072ff);
-  color: white;
-  text-decoration: none;
-  font-size: 0.88rem;
-}
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 14px;
-}
-.delete-form { margin: 0; }
-.delete-btn {
-  padding: 10px 18px;
-  border-radius: 999px;
-  border: 1px solid #7f1d1d;
-  background: #3b0d0d;
-  color: #fecaca;
-  font-size: 0.88rem;
-  cursor: pointer;
-}
-.delete-btn:hover {
-  background: #571313;
-}
-.empty {
-  background: #1e93bb33;
-  border: 1px dashed #38bdf8;
-  border-radius: 16px;
-  padding: 28px;
-  text-align: center;
-  color: #cbd5e1;
-}
-.empty strong { color: #f8fafc; }
-</style>
+  <meta charset="UTF-8">
+  <title>My AI Trip Plans — Voyager AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green: #2C5F3F;
+      --green-dark: #1e4530;
+      --green-light: #EDF4EF;
+      --green-border: #C2D9C9;
+      --cream: #F7F5F0;
+      --cream-border: #E8E6E0;
+      --card-bg: #FAFAF8;
+      --text-primary: #1a1a18;
+      --text-muted: #666;
+      --text-hint: #999;
+      --white: #ffffff;
+      --sidebar-bg: #1a2e22;
+      --sidebar-hover: #243d2d;
+      --sidebar-active: #2C5F3F;
+      --sidebar-text: rgba(255,255,255,0.6);
+      --amber: #BA7517;
+      --amber-light: #FAEEDA;
+      --amber-border: #FAC775;
+      --red: #A32D2D;
+      --red-light: #FCEBEB;
+      --red-border: #F09595;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+      --radius-sm: 7px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --sidebar-w: 240px;
+      --transition: 0.2s ease;
+    }
+
+    html, body {
+      min-height: 100vh;
+      font-family: var(--font-sans);
+      background: var(--cream);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ─── Layout ─── */
+    .dashboard { display: flex; min-height: 100vh; }
+
+    /* ─── Sidebar ─── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 0;
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      z-index: 50;
+      transition: transform var(--transition);
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 24px;
+      margin-bottom: 36px;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .sidebar-logo-mark {
+      width: 32px; height: 32px;
+      background: var(--green);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      padding: 0 24px;
+      margin: 20px 0 8px;
+    }
+
+    .sidebar-nav { flex: 1; display: flex; flex-direction: column; }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--sidebar-text);
+      transition: background var(--transition), color var(--transition);
+      position: relative;
+    }
+
+    .sidebar-link:hover { background: var(--sidebar-hover); color: var(--white); }
+
+    .sidebar-link.active {
+      background: var(--sidebar-active);
+      color: var(--white);
+      font-weight: 500;
+    }
+
+    .sidebar-link.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .link-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+
+    .sidebar-bottom {
+      padding: 16px 24px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin-top: auto;
+    }
+
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .user-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .user-info-name { font-size: 13px; font-weight: 500; color: var(--white); }
+    .user-info-sub { font-size: 11px; color: rgba(255,255,255,0.4); }
+
+    .logout-form button {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.45);
+      font-size: 13px;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      padding: 0;
+      transition: color var(--transition);
+    }
+
+    .logout-form button:hover { color: rgba(255,255,255,0.8); }
+
+    /* ─── Sidebar overlay ─── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 40;
+    }
+
+    .sidebar-overlay.show { display: block; }
+
+    /* ─── Mobile topbar ─── */
+    .mobile-topbar {
+      display: none;
+      position: sticky; top: 0; z-index: 30;
+      background: var(--white);
+      border-bottom: 1px solid var(--cream-border);
+      padding: 14px 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mobile-topbar-logo {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 15px; font-weight: 600; color: var(--text-primary);
+    }
+
+    .mobile-topbar-logo-mark {
+      width: 28px; height: 28px;
+      background: var(--green);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+    }
+
+    .hamburger {
+      background: none; border: none; cursor: pointer;
+      display: flex; flex-direction: column; gap: 4px; padding: 4px;
+    }
+
+    .hamburger span {
+      display: block; width: 20px; height: 1.5px;
+      background: var(--text-primary); border-radius: 2px;
+    }
+
+    /* ─── Main ─── */
+    .main { flex: 1; margin-left: var(--sidebar-w); min-height: 100vh; background: var(--cream); }
+
+    /* ─── Topbar ─── */
+    .topbar {
+      background: var(--white);
+      border-bottom: 1px solid var(--cream-border);
+      padding: 18px 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky; top: 0; z-index: 20;
+      flex-wrap: wrap;
+    }
+
+    .topbar-left h1 {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+    }
+
+    .topbar-left p { font-size: 13px; color: var(--text-hint); margin-top: 2px; }
+
+    .topbar-right { display: flex; align-items: center; gap: 10px; }
+
+    .nav-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    .nav-btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--cream-border);
+      color: var(--text-muted);
+    }
+
+    .nav-btn-outline:hover { border-color: var(--green); color: var(--green); }
+
+    .nav-btn-fill {
+      background: var(--green);
+      border: none;
+      color: var(--white);
+    }
+
+    .nav-btn-fill:hover { background: var(--green-dark); }
+
+    /* ─── Content ─── */
+    .content { padding: 32px 36px; max-width: 880px; }
+
+    /* ─── Summary bar ─── */
+    .summary-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .summary-chip {
+      background: var(--white);
+      border: 1px solid var(--cream-border);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 130px;
+    }
+
+    .chip-icon {
+      width: 34px; height: 34px;
+      background: var(--green-light);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .chip-num { font-size: 18px; font-weight: 600; color: var(--text-primary); line-height: 1; }
+    .chip-lbl { font-size: 11px; color: var(--text-hint); margin-top: 2px; }
+
+    /* ─── Section header ─── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .section-count {
+      font-size: 12px;
+      color: var(--text-hint);
+      background: var(--card-bg);
+      border: 1px solid var(--cream-border);
+      border-radius: 99px;
+      padding: 3px 10px;
+    }
+
+    /* ─── Cards (original class name preserved) ─── */
+    .cards { display: flex; flex-direction: column; gap: 14px; }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--cream-border);
+      border-radius: var(--radius-lg);
+      padding: 22px 24px;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .card:hover { border-color: var(--green-border); }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .card-thumb {
+      width: 46px; height: 46px;
+      border-radius: 10px;
+      background: var(--green-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .card-head { flex: 1; min-width: 0; }
+
+    /* original h2 tag preserved */
+    .card h2 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-date {
+      font-size: 12px;
+      color: var(--text-hint);
+    }
+
+    .card-type-badge {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 99px;
+      background: var(--green-light);
+      color: var(--green);
+      border: 1px solid var(--green-border);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* original meta class preserved */
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--cream-border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+
+    .meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .meta-item-label { font-size: 11px; color: var(--text-hint); font-weight: 500; letter-spacing: 0.2px; }
+    .meta-item-val { font-size: 13px; color: var(--text-primary); font-weight: 500; }
+
+    /* original actions class preserved */
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* original .cta class preserved */
+    a.cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      background: var(--green);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      transition: background var(--transition);
+    }
+
+    a.cta:hover { background: var(--green-dark); }
+
+    /* original delete-form / delete-btn preserved */
+    .delete-form { margin: 0; }
+
+    .delete-btn {
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--red-border);
+      background: var(--red-light);
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: background var(--transition), border-color var(--transition);
+    }
+
+    .delete-btn:hover { background: #F7C1C1; border-color: #E24B4A; }
+
+    /* ─── Empty state (original class preserved) ─── */
+    .empty {
+      background: var(--white);
+      border: 1.5px dashed var(--green-border);
+      border-radius: var(--radius-lg);
+      padding: 56px 32px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 64px; height: 64px;
+      background: var(--green-light);
+      border: 1px solid var(--green-border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 20px;
+    }
+
+    .empty strong {
+      display: block;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .empty p {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 360px;
+      margin: 0 auto 24px;
+      line-height: 1.65;
+    }
+
+    .empty-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 24px;
+      background: var(--green);
+      color: var(--white);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .empty-cta:hover { background: var(--green-dark); }
+
+    /* ─── Animations ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.10s; }
+    .card:nth-child(3) { animation-delay: 0.15s; }
+    .card:nth-child(4) { animation-delay: 0.20s; }
+    .card:nth-child(5) { animation-delay: 0.25s; }
+    .card:nth-child(6) { animation-delay: 0.30s; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .mobile-topbar { display: flex; }
+      .main { margin-left: 0; }
+      .topbar { display: none; }
+      .content { padding: 20px 16px; }
+      .summary-bar { gap: 8px; }
+      .meta { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .summary-chip { flex: 1 1 40%; }
+      .meta { grid-template-columns: 1fr 1fr; }
+      .actions { flex-direction: column; align-items: flex-start; }
+      a.cta, .delete-btn { width: 100%; text-align: center; justify-content: center; }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div>
-      <h1>Your AI trip plans</h1>
-      <p>Open any plan to read the full itinerary generated for you.</p>
-    </div>
-    <div class="nav">
-      <a href="/back/<%= userid %>">Home</a>
-      <a href="#" onclick="history.back(); return false;">Back</a>
-    </div>
-  </header>
 
-  <% if (!trips || trips.length === 0) { %>
-    <div class="empty">
-      <p><strong>No plans yet.</strong></p>
-      <p style="margin-top:10px;">Create a trip from your dashboard and generate a plan first.</p>
-    </div>
-  <% } else { %>
-    <div class="cards">
-      <% trips.forEach(function (trip) { %>
-        <article class="card">
-          <h2><%= trip.destination %></h2>
-          <div class="meta">
-            <%= trip.days %> days · Budget ₹<%= trip.budget %> · <%= trip.type %><br>
-            Transport: <%= trip.transport %> · Stay: <%= trip.stay %><br>
-            <% if (trip.createdAt) { %>
-              Planned: <%= new Date(trip.createdAt).toLocaleString() %>
-            <% } %>
-          </div>
-          <div class="actions">
-            <a class="cta" href="/tripview/<%= trip._id %>?userid=<%= encodeURIComponent(userid) %>">View full AI plan</a>
-            <form class="delete-form" method="POST" action="/tripdelete/<%= trip._id %>" onsubmit="return confirm('Delete this trip plan permanently?');">
-              <input type="hidden" name="userid" value="<%= userid %>">
-              <button type="submit" class="delete-btn">Delete</button>
-            </form>
-          </div>
-        </article>
-      <% }); %>
-    </div>
-  <% } %>
+<!-- Sidebar overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Mobile topbar -->
+<div class="mobile-topbar">
+  <div class="mobile-topbar-logo">
+    <div class="mobile-topbar-logo-mark">✈</div>
+    Voyager AI
+  </div>
+  <button class="hamburger" id="hamburgerBtn">
+    <span></span><span></span><span></span>
+  </button>
 </div>
+
+<div class="dashboard">
+
+  <!-- ─── Sidebar ─── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">✈</div>
+      Voyager AI
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Main</div>
+
+      <!-- Original href preserved -->
+      <a href="/back/<%= userid %>" class="sidebar-link">
+        <span class="link-icon">⊞</span> Dashboard
+      </a>
+
+      <a href="/myplans/<%= userid %>" class="sidebar-link active">
+        <span class="link-icon">🗂</span> My AI Plans
+      </a>
+
+      <a href="#" class="sidebar-link">
+        <span class="link-icon">🗺</span> Explore Destinations
+      </a>
+
+      <div class="sidebar-section-label">Account</div>
+
+      <a href="#" class="sidebar-link">
+        <span class="link-icon">⚙</span> Settings
+      </a>
+
+      <a href="#" class="sidebar-link">
+        <span class="link-icon">?</span> Help & Support
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="user-avatar"><%=user.fname[0]%><%=user.lname[0]%></div>
+        <div>
+          <div class="user-info-name"><%= user.fname %> <%= user.lname %></div>
+          <div class="user-info-sub"><%= user.email %></div>
+        </div>
+      </div>
+      <form action="/logout" method="GET" class="logout-form">
+        <button type="submit">⇥ &nbsp;Log out</button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- ─── Main ─── -->
+  <div class="main">
+
+    <!-- Desktop topbar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>My AI trip plans</h1>
+        <p>Open any plan to read the full itinerary generated for you.</p>
+      </div>
+      <div class="topbar-right">
+        <!-- Original nav links preserved -->
+        <a href="/back/<%= userid %>" class="nav-btn nav-btn-outline">⊞ Dashboard</a>
+        <a href="#" onclick="history.back(); return false;" class="nav-btn nav-btn-outline">← Back</a>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Summary bar -->
+      <% if (trips && trips.length > 0) { %>
+      <div class="summary-bar">
+        <div class="summary-chip">
+          <div class="chip-icon">🗂</div>
+          <div>
+            <div class="chip-num"><%= trips.length %></div>
+            <div class="chip-lbl">Total plans</div>
+          </div>
+        </div>
+        <div class="summary-chip">
+          <div class="chip-icon">📅</div>
+          <div>
+            <div class="chip-num"><%= trips.reduce((s,t) => s + (Number(t.days)||0), 0) %></div>
+            <div class="chip-lbl">Days planned</div>
+          </div>
+        </div>
+        <div class="summary-chip">
+          <div class="chip-icon">💰</div>
+          <div>
+            <div class="chip-num">₹<%= trips.reduce((s,t) => s + (Number(t.budget)||0), 0).toLocaleString() %></div>
+            <div class="chip-lbl">Total budget</div>
+          </div>
+        </div>
+        <div class="summary-chip">
+          <div class="chip-icon">🌍</div>
+          <div>
+            <div class="chip-num"><%= new Set(trips.map(t => t.destination)).size %></div>
+            <div class="chip-lbl">Destinations</div>
+          </div>
+        </div>
+      </div>
+      <% } %>
+
+      <!-- Section header -->
+      <% if (trips && trips.length > 0) { %>
+      <div class="section-header">
+        <span class="section-title">All plans</span>
+        <span class="section-count"><%= trips.length %> plan<%= trips.length !== 1 ? 's' : '' %></span>
+      </div>
+      <% } %>
+
+      <!-- Empty state (original class preserved) -->
+      <% if (!trips || trips.length === 0) { %>
+        <div class="empty">
+          <div class="empty-icon">🗺</div>
+          <strong>No plans yet.</strong>
+          <p>You haven't created any AI trip plans yet. Head to the dashboard, create a trip, and let Voyager AI generate a complete itinerary for you — in seconds.</p>
+          <a href="/back/<%= userid %>" class="empty-cta">Go to dashboard →</a>
+        </div>
+
+      <% } else { %>
+
+        <!-- Cards (original class preserved) -->
+        <div class="cards">
+          <% trips.forEach(function(trip, idx) { %>
+
+            <!-- Assign a travel emoji based on trip type -->
+            <%
+              const icons = { adventure: '🏔', leisure: '🏖', culture: '🕌', nature: '🌿', business: '🏙', food: '🍜' };
+              const thumbIcon = icons[(trip.type || '').toLowerCase()] || '✈';
+            %>
+
+            <article class="card">
+              <div class="card-top">
+                <div class="card-thumb"><%= thumbIcon %></div>
+                <div class="card-head">
+                  <!-- original h2 preserved -->
+                  <h2><%= trip.destination %></h2>
+                  <% if (trip.createdAt) { %>
+                    <div class="card-date">Planned on <%= new Date(trip.createdAt).toLocaleString() %></div>
+                  <% } %>
+                </div>
+                <span class="card-type-badge"><%= trip.type || 'Trip' %></span>
+              </div>
+
+              <!-- original meta class preserved -->
+              <div class="meta">
+                <div class="meta-item">
+                  <span class="meta-item-label">Duration</span>
+                  <span class="meta-item-val"><%= trip.days %> days</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-item-label">Budget</span>
+                  <span class="meta-item-val">₹<%= Number(trip.budget).toLocaleString() %></span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-item-label">Transport</span>
+                  <span class="meta-item-val"><%= trip.transport %></span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-item-label">Stay</span>
+                  <span class="meta-item-val"><%= trip.stay %></span>
+                </div>
+              </div>
+
+              <!-- original actions class preserved -->
+              <div class="actions">
+                <!-- original .cta href preserved -->
+                <a class="cta" href="/tripview/<%= trip._id %>?userid=<%= encodeURIComponent(userid) %>">
+                  View full AI plan →
+                </a>
+
+                <!-- original delete-form / delete-btn preserved -->
+                <form class="delete-form" method="POST" action="/tripdelete/<%= trip._id %>" onsubmit="return confirm('Delete this trip plan permanently?');">
+                  <input type="hidden" name="userid" value="<%= userid %>">
+                  <button type="submit" class="delete-btn">Delete</button>
+                </form>
+              </div>
+            </article>
+
+          <% }); %>
+        </div>
+
+      <% } %>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const hamburger = document.getElementById('hamburgerBtn');
+
+  function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('show'); }
+  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+
+  if (hamburger) hamburger.addEventListener('click', openSidebar);
+  if (overlay) overlay.addEventListener('click', closeSidebar);
+</script>
+
 </body>
 </html>

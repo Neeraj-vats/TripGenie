@@ -117,10 +117,14 @@ app.post("/login", async (req, res, next) => {
     }
 });
 
-// app.get("/logout", async (req, res, next) => {
-//     const result = await authServices.logout();
-//     res.redirect("/");
-// });
+app.get("/logout", async (req, res, next) => {
+    try {
+        await authServices.logout();
+    } catch (e) {
+        console.error("Logout API failed:", e.message);
+    }
+    return res.redirect("/");
+});
 
 app.get("/forget", (req, res, next) => {
     res.sendFile(path.join(__dirname, 'public', 'forget.html'));
@@ -170,10 +174,16 @@ app.post("/trip", async (req, res, next) => {
 
 app.get("/myplans/:userid", async (req, res, next) => {
     try {
-        const trips = await tripServices.listTrips(req.params.userid);
+        const userid = req.params.userid;
+        const trips = await tripServices.listTrips(userid);
+        const result = await tripServices.gettripinput({ userid });
+        if (!result || !result.user) {
+            return res.status(404).send("User not found.");
+        }
         res.render("myplans", {
             trips,
-            userid: req.params.userid,
+            userid,
+            user: result.user,
         });
     } catch (e) {
         console.error(e);

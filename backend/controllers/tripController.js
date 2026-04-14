@@ -29,7 +29,9 @@ function serializeTripSummary(t) {
 exports.listTrips = async (req, res, next) => {
     try {
         const trips = await Trip.findByUserId(req.params.userid);
-        res.json({ trips: trips.map(serializeTripSummary) });
+        const user = await User.findbyId(req.params.userid);
+        console.log("user is ", user);
+        res.json({ trips: trips.map(serializeTripSummary), user });
     } catch (e) {
         console.error(e);
         res.status(500).json({ error: e.message });

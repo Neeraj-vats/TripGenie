@@ -696,7 +696,11 @@
   </button>
 </div>
 
-<div class="dashboard">
+<div
+  class="dashboard"
+  data-stats='<%- JSON.stringify(stats || { totalTrips: 0, totalBudget: "0", totalDays: 0, uniqueDestinations: 0 }) %>'
+  data-trips='<%- JSON.stringify(recentTrips || []) %>'
+>
 
   <!-- ─── Sidebar ─── -->
   <aside class="sidebar" id="sidebar">
@@ -956,13 +960,11 @@
 </div>
 
 <script>
-  const dashboardStats = <%- JSON.stringify(stats || {
-    totalTrips: 0,
-    totalBudget: "0",
-    totalDays: 0,
-    uniqueDestinations: 0,
-  }) %>;
-  const dashboardTrips = <%- JSON.stringify(recentTrips || []) %>;
+  const dashboardRoot = document.querySelector('.dashboard');
+  const dashboardStats = JSON.parse(
+    dashboardRoot?.dataset?.stats || '{"totalTrips":0,"totalBudget":"0","totalDays":0,"uniqueDestinations":0}'
+  );
+  const dashboardTrips = JSON.parse(dashboardRoot?.dataset?.trips || '[]');
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebarOverlay');
   const hamburger = document.getElementById('hamburgerBtn');
