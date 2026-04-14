@@ -50,11 +50,16 @@ exports.getTrip = async (tripId, userid) => {
     return result.trip || null;
 };
 
-exports.backtohome = async (id) => {
-    const response = await fetch(`http://localhost:2376/api/backtohome/${id}`, {
-        method: "GET"
-    })
-     
+exports.deleteTrip = async (tripId, userid) => {
+    const q = new URLSearchParams({ userid: String(userid) });
+    const response = await fetch(
+        `http://localhost:2376/api/trip/${encodeURIComponent(tripId)}?${q}`,
+        { method: "DELETE" }
+    );
+
     const result = await response.json();
-    return result;
-}
+    return {
+        ok: response.ok,
+        ...result,
+    };
+};

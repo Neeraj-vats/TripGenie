@@ -734,7 +734,7 @@
 
     <div class="sidebar-bottom">
       <div class="sidebar-user">
-        <div class="user-avatar">JD</div>
+        <div class="user-avatar"><%=user.fname[0]%><%=user.lname[0]%></div>
         <div>
           <div class="user-info-name"><%= user.fname %> <%= user.lname %></div>
           <div class="user-info-email"><%= user.email %></div>
@@ -754,7 +754,7 @@
     <!-- Desktop topbar -->
     <div class="topbar">
       <div class="topbar-left">
-        <h1>Good morning, <%= user.fname %> 👋</h1>
+        <h1>Welcome, <%= user.fname %> 👋</h1>
         <p>Here's what's happening with your travels today.</p>
       </div>
       <div class="topbar-right">
@@ -802,7 +802,7 @@
             <div class="stat-icon">🌍</div>
             <span class="stat-badge">Explored</span>
           </div>
-          <div class="stat-num">8</div>
+          <div class="stat-num">0</div>
           <div class="stat-label">Destinations visited</div>
         </div>
       </div>
@@ -956,6 +956,13 @@
 </div>
 
 <script>
+  const dashboardStats = <%- JSON.stringify(stats || {
+    totalTrips: 0,
+    totalBudget: "0",
+    totalDays: 0,
+    uniqueDestinations: 0,
+  }) %>;
+  const dashboardTrips = <%- JSON.stringify(recentTrips || []) %>;
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebarOverlay');
   const hamburger = document.getElementById('hamburgerBtn');
@@ -986,6 +993,54 @@
     el.style.transition = 'opacity 0.4s ease, transform 0.4s ease, border-color 0.2s ease, background 0.2s ease';
     observer.observe(el);
   });
+
+  const statCards = document.querySelectorAll('.stats-grid .stat-card');
+  if (statCards.length >= 4) {
+    statCards[0].querySelector('.stat-num').textContent = String(dashboardStats.totalTrips ?? 0);
+    statCards[1].querySelector('.stat-num').textContent = `₹${dashboardStats.totalBudget ?? '0'}`;
+    statCards[2].querySelector('.stat-num').textContent = String(dashboardStats.totalDays ?? 0);
+    statCards[2].querySelector('.stat-badge').textContent = 'Planned';
+    statCards[2].querySelector('.stat-label').textContent = 'Total travel days planned';
+    statCards[3].querySelector('.stat-num').textContent = String(dashboardStats.uniqueDestinations ?? 0);
+    statCards[3].querySelector('.stat-label').textContent = 'Unique destinations saved';
+  }
+
+  const tripsPanel = document.querySelector('.trips-panel');
+  const tripsHeader = tripsPanel ? tripsPanel.querySelector('.section-header') : null;
+  if (tripsPanel && tripsHeader) {
+    tripsPanel.querySelectorAll('.trip-card').forEach((card) => card.remove());
+
+    const tripsToRender = dashboardTrips.length > 0
+      ? dashboardTrips
+      : [{
+          destination: 'No trips yet',
+          days: '',
+          budget: '',
+          type: 'Create your first AI trip plan to see it here.',
+          icon: '✈',
+          status: { label: 'Start', className: 'status-planned' },
+        }];
+
+    tripsToRender.forEach((trip) => {
+      const card = document.createElement('div');
+      card.className = 'trip-card';
+      card.innerHTML = `
+        <div class="trip-thumb">${trip.icon || '✈'}</div>
+        <div class="trip-info">
+          <div class="trip-name">${trip.destination || 'Untitled trip'}</div>
+          <div class="trip-meta">${
+            trip.days && trip.budget
+              ? `${trip.days} Days &nbsp;·&nbsp; ₹${trip.budget} &nbsp;·&nbsp; ${trip.type || 'Trip'}`
+              : (trip.type || 'Trip details unavailable')
+          }</div>
+        </div>
+        <span class="trip-status ${trip.status?.className || 'status-planned'}">${trip.status?.label || 'Saved'}</span>
+      `;
+      tripsPanel.appendChild(card);
+      card.style.transition = 'opacity 0.4s ease, transform 0.4s ease, border-color 0.2s ease, background 0.2s ease';
+      observer.observe(card);
+    });
+  }
 </script>
 
 </body>

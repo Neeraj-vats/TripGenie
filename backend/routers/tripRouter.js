@@ -7,6 +7,6 @@ tripRouter.post("/input", tripController.getinput);
 tripRouter.post("/generatetrip", tripController.trip);
 tripRouter.get("/trips/:userid", tripController.listTrips);
 tripRouter.get("/trip/:tripId", tripController.getTrip);
-tripRouter.get("/backtohome/:id", tripController.backtohome);
+tripRouter.delete("/trip/:tripId", tripController.deleteTrip);
 
 module.exports = tripRouter;

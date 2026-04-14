@@ -48,6 +48,15 @@ class Trip {
         const db = getdb();
         return db.collection("trips").findOne({ _id: new ObjectId(String(id)) });
     }
+
+    static async deleteByIdForUser(id, userid) {
+        const db = getdb();
+        const result = await db.collection("trips").deleteOne({
+            _id: new ObjectId(String(id)),
+            userid: String(userid),
+        });
+        return result.deletedCount === 1;
+    }
 }
 
 module.exports = Trip;

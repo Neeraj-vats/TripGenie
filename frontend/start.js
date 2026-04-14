@@ -11,6 +11,72 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 
+function toNumber(value) {
+    const cleaned = String(value ?? "")
+        .replace(/[^0-9.]/g, "")
+        .trim();
+    const parsed = Number(cleaned);
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function formatCurrency(value) {
+    return new Intl.NumberFormat("en-IN", {
+        maximumFractionDigits: 0,
+    }).format(value);
+}
+
+function buildTripStatus(index) {
+    if (index === 0) {
+        return { label: "Latest", className: "status-upcoming" };
+    }
+    if (index < 3) {
+        return { label: "Recent", className: "status-planned" };
+    }
+    return { label: "Saved", className: "status-completed" };
+}
+
+function tripEmoji(type) {
+    const map = {
+        Adventure: "🏔",
+        Leisure: "🏖",
+        Culture: "🏛",
+        Nature: "🌿",
+        Business: "🏙",
+        Couple: "💕",
+        Family: "👨",
+        Solo: "🎒",
+        Friends: "🎉",
+    };
+    return map[String(type || "").trim()] || "✈";
+}
+
+async function renderHomePage(res, user) {
+    const trips = await tripServices.listTrips(user._id);
+    const totalTrips = trips.length;
+    const totalBudget = trips.reduce((sum, trip) => sum + toNumber(trip.budget), 0);
+    const totalDays = trips.reduce((sum, trip) => sum + toNumber(trip.days), 0);
+    const uniqueDestinations = new Set(
+        trips.map((trip) => String(trip.destination || "").trim().toLowerCase()).filter(Boolean)
+    ).size;
+
+    const recentTrips = trips.slice(0, 5).map((trip, index) => ({
+        ...trip,
+        icon: tripEmoji(trip.type),
+        status: buildTripStatus(index),
+    }));
+
+    return res.render("home", {
+        user,
+        stats: {
+            totalTrips,
+            totalBudget: formatCurrency(totalBudget),
+            totalDays,
+            uniqueDestinations,
+        },
+        recentTrips,
+    });
+}
+
 app.get("/", (req, res, next) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -45,7 +111,7 @@ app.post("/login", async (req, res, next) => {
         res.render('login', {errors: ["User doesn't exists!"]});
     } else if(result.status === true ) {
         console.log("user loggedin is ", result.user)
-        res.render("home", {user: result.user});
+        await renderHomePage(res, result.user);
     } else {
         res.render("login", {errors: ["Password Invalid"]});
     }
@@ -127,12 +193,43 @@ app.get("/tripview/:tripId", async (req, res, next) => {
     res.render("tripdetail", { trip, userid });
 });
 
-app.get("/back/:id", async (req, res, next) => {
-    const tripid = req.params.id;
-    console.log("trip id in frontend", tripid);
-    const result = await tripServices.backtohome(tripid);
+app.post("/tripdelete/:tripId", async (req, res, next) => {
+    try {
+        const { tripId } = req.params;
+        const { userid } = req.body;
 
-})
+        if (!userid) {
+            return res.status(400).send("Missing userid.");
+        }
+
+        const result = await tripServices.deleteTrip(tripId, userid);
+        if (!result.ok || !result.success) {
+            return res.status(502).send(
+                `Could not delete trip. ${result.error || "Unknown error"}`
+            );
+        }
+
+        return res.redirect(`/myplans/${encodeURIComponent(userid)}`);
+    } catch (e) {
+        console.error(e);
+        return res.status(500).send("Could not delete trip.");
+    }
+});
+
+app.get("/back/:id", async (req, res, next) => {
+    try {
+        const userid = req.params.id;
+        console.log("user id for home navigation", userid);
+        const result = await tripServices.gettripinput({ userid });
+        if (!result || !result.user) {
+            return res.status(404).send("User not found.");
+        }
+        return renderHomePage(res, result.user);
+    } catch (e) {
+        console.error(e);
+        return res.status(500).send("Could not load home page.");
+    }
+});
 
 const PORT = 9876;
 app.listen(PORT, () => {

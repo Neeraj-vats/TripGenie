@@ -59,6 +59,31 @@ exports.getTrip = async (req, res, next) => {
     }
 };
 
+exports.deleteTrip = async (req, res, next) => {
+    try {
+        const { tripId } = req.params;
+        const { userid } = req.query;
+
+        if (!tripId || !ObjectId.isValid(String(tripId))) {
+            return res.status(400).json({ success: false, error: "Invalid trip id" });
+        }
+
+        if (!userid) {
+            return res.status(400).json({ success: false, error: "Missing userid" });
+        }
+
+        const deleted = await Trip.deleteByIdForUser(tripId, userid);
+        if (!deleted) {
+            return res.status(404).json({ success: false, error: "Trip not found" });
+        }
+
+        return res.json({ success: true });
+    } catch (e) {
+        console.error(e);
+        return res.status(500).json({ success: false, error: e.message });
+    }
+};
+
 exports.trip = async (req, res, next) => {
     const data = req.body;
     console.log("trip data is", data);
@@ -125,7 +150,3 @@ exports.trip = async (req, res, next) => {
     }
 };
 
-exports.backtohome = async (req, res, next) => {
-    const tripid = req.params.id;
-    console.log("trip id in backend", tripid);
-}

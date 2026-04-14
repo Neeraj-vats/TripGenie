@@ -60,6 +60,26 @@ header p { color: #94a3b8; font-size: 0.95rem; margin-top: 6px; }
   text-decoration: none;
   font-size: 0.88rem;
 }
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.delete-form { margin: 0; }
+.delete-btn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 1px solid #7f1d1d;
+  background: #3b0d0d;
+  color: #fecaca;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+.delete-btn:hover {
+  background: #571313;
+}
 .empty {
   background: #1e93bb33;
   border: 1px dashed #38bdf8;
@@ -79,7 +99,7 @@ header p { color: #94a3b8; font-size: 0.95rem; margin-top: 6px; }
       <p>Open any plan to read the full itinerary generated for you.</p>
     </div>
     <div class="nav">
-      <a href="/back/<%= trips._id%>">Home</a>
+      <a href="/back/<%= userid %>">Home</a>
       <a href="#" onclick="history.back(); return false;">Back</a>
     </div>
   </header>
@@ -101,7 +121,13 @@ header p { color: #94a3b8; font-size: 0.95rem; margin-top: 6px; }
               Planned: <%= new Date(trip.createdAt).toLocaleString() %>
             <% } %>
           </div>
-          <a class="cta" href="/tripview/<%= trip._id %>?userid=<%= encodeURIComponent(userid) %>">View full AI plan</a>
+          <div class="actions">
+            <a class="cta" href="/tripview/<%= trip._id %>?userid=<%= encodeURIComponent(userid) %>">View full AI plan</a>
+            <form class="delete-form" method="POST" action="/tripdelete/<%= trip._id %>" onsubmit="return confirm('Delete this trip plan permanently?');">
+              <input type="hidden" name="userid" value="<%= userid %>">
+              <button type="submit" class="delete-btn">Delete</button>
+            </form>
+          </div>
         </article>
       <% }); %>
     </div>
