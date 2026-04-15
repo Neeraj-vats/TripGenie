@@ -58,7 +58,10 @@ exports.getTrip = async (tripId, userid) => {
         return null;
     }
     const result = await response.json();
-    return result.trip || null;
+    return {
+        trip: result.trip || null,
+        user: result.user || null,
+    };
 };
 
 exports.deleteTrip = async (tripId, userid) => {

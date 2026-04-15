@@ -118,11 +118,12 @@ app.post("/login", async (req, res, next) => {
 });
 
 app.get("/logout", async (req, res, next) => {
-    try {
-        await authServices.logout();
-    } catch (e) {
-        console.error("Logout API failed:", e.message);
-    }
+    // try {
+    //     await authServices.logout();
+    // } catch (e) {
+    //     console.error("Logout API failed:", e.message);
+    // }
+    console.log("Logout successfully")
     return res.redirect("/");
 });
 
@@ -196,11 +197,11 @@ app.get("/tripview/:tripId", async (req, res, next) => {
     if (!userid) {
         return res.status(400).send("Missing userid.");
     }
-    const trip = await tripServices.getTrip(req.params.tripId, userid);
-    if (!trip) {
+    const result = await tripServices.getTrip(req.params.tripId, userid);
+    if (!result || !result.trip) {
         return res.status(404).send("Trip not found.");
     }
-    res.render("tripdetail", { trip, userid });
+    res.render("tripdetail", { trip: result.trip, userid, user: result.user });
 });
 
 app.post("/tripdelete/:tripId", async (req, res, next) => {

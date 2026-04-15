@@ -738,7 +738,7 @@
 
     <div class="sidebar-bottom">
       <div class="sidebar-user">
-        <div class="user-avatar"><%=user.fname[0]%><%=user.lname[0]%></div>
+        <div class="user-avatar"><%= user.fname[0].toUpperCase() %><%= user.lname[0].toUpperCase() %></div>
         <div>
           <div class="user-info-name"><%= user.fname %>&nbsp;<%= user.lname %></div>
           <div class="user-info-email"><%= user.email %></div>

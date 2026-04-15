@@ -639,6 +639,64 @@ a { text-decoration: none; color: inherit; }
   word-break: break-word;
 }
 
+.plan-summary-block {
+  background: linear-gradient(180deg, #fffdf8 0%, #fff 100%);
+  border: 1px solid var(--amber-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.plan-summary-head {
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--amber-light);
+  border-bottom: 1px solid rgba(186,117,23,0.18);
+}
+
+.plan-summary-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #7a4f14;
+}
+
+.plan-summary-sub {
+  font-size: 12px;
+  color: #9a6a22;
+}
+
+.plan-summary-body {
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.plan-summary-item {
+  border: 1px solid var(--cream-border);
+  border-radius: 12px;
+  background: var(--white);
+  padding: 14px 16px;
+}
+
+.plan-summary-item-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 8px;
+}
+
+.plan-summary-item-text {
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 /* ─── Raw fallback ─── */
 .raw-block {
   padding: 20px 22px;
@@ -769,10 +827,10 @@ a { text-decoration: none; color: inherit; }
 
     <div class="sidebar-bottom">
       <div class="sidebar-user">
-        <div class="user-avatar">AI</div>
+        <div class="user-avatar"><%= user.fname[0].toUpperCase() %><%= user.lname[0].toUpperCase() %></div>
         <div>
-          <div class="user-info-name">Your Plan</div>
-          <div class="user-info-email"><%= trip.destination %></div>
+          <div class="user-info-name"><%= user.fname %>&nbsp;<%= user.lname %></div>
+          <div class="user-info-email"><%= user.email %></div>
         </div>
       </div>
     </div>
@@ -1026,6 +1084,8 @@ a { text-decoration: none; color: inherit; }
   function cleanMarkdown(text) {
     if (!text) return '';
     return String(text)
+      .replace(/([^\n])\s+(Day\s*\d+\b)/gi, '$1\n$2')
+      .replace(/([^\n])\s+(\d+\.\s+[A-Z][^\n]*)/g, '$1\n$2')
       .replace(/^\s*#{1,6}\s+/gm, '')
       .replace(/^\s*[\*\-]\s+/gm, '• ')
       .replace(/\*\*(.+?)\*\*/g, '$1')
@@ -1035,16 +1095,63 @@ a { text-decoration: none; color: inherit; }
       .trim();
   }
 
+  function isSummaryMarker(line) {
+    return /^\s*(\d+\.\s+)?(transport|stay|budget|cost|money-saving|money saving|tips|tip|notes|summary|food|flights?|accommodation|shopping|miscellaneous|total)\b/i.test(line || '');
+  }
+
+  function splitTrailingSummary(blockLines) {
+    if (!blockLines || blockLines.length <= 1) {
+      return { dayLines: blockLines || [], trailingSummary: [] };
+    }
+    const head = blockLines[0];
+    const body = blockLines.slice(1);
+    const summaryStart = body.findIndex((line, idx) => {
+      if (!isSummaryMarker(line)) return false;
+      const prev = idx > 0 ? body[idx - 1] : '';
+      return !/^\s*(morning|afternoon|evening|places?)\b/i.test(prev);
+    });
+    if (summaryStart === -1) {
+      return { dayLines: blockLines, trailingSummary: [] };
+    }
+    return {
+      dayLines: [head].concat(body.slice(0, summaryStart).filter(Boolean)),
+      trailingSummary: body.slice(summaryStart).filter(Boolean),
+    };
+  }
+
   function splitIntoDays(lines) {
     const dayIdx = [];
     lines.forEach((l, i) => { if (/^\s*day\s*\d+\b/i.test(l)) dayIdx.push(i); });
-    if (!dayIdx.length) return { summary: lines, days: [] };
+    if (!dayIdx.length) return { summary: lines, days: [], endSummary: [] };
     const summary = lines.slice(0, dayIdx[0]).filter(Boolean);
+    let endSummary = [];
     const days = dayIdx.map((start, d) => {
       const end = d + 1 < dayIdx.length ? dayIdx[d + 1] : lines.length;
-      return lines.slice(start, end).filter(Boolean);
+      const block = lines.slice(start, end).filter(Boolean);
+      const split = splitTrailingSummary(block);
+      if (split.trailingSummary.length) {
+        endSummary = endSummary.concat(split.trailingSummary);
+      }
+      return split.dayLines;
     });
-    return { summary, days };
+    return { summary, days, endSummary };
+  }
+
+  function groupSummarySections(lines) {
+    const groups = [];
+    let current = null;
+    lines.forEach((line) => {
+      const normalized = String(line || '').replace(/^(\d+\.\s+)/, '').trim();
+      if (isSummaryMarker(line)) {
+        if (current) groups.push(current);
+        current = { title: normalized.replace(/[:\-]\s*$/, ''), lines: [] };
+        return;
+      }
+      if (!current) current = { title: 'Trip summary', lines: [] };
+      current.lines.push(line);
+    });
+    if (current) groups.push(current);
+    return groups.filter(group => group.title || group.lines.length);
   }
 
   function parseSlots(blockLines) {
@@ -1074,7 +1181,7 @@ a { text-decoration: none; color: inherit; }
   const rawText = rawEl.value || '';
   const cleaned = cleanMarkdown(rawText);
   const lines   = cleaned.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
-  const { summary, days } = splitIntoDays(lines);
+  const { summary, days, endSummary } = splitIntoDays(lines);
 
   /* Progress bar */
   const totalDays = parseInt('<%= trip.days %>', 10) || days.length || 1;
@@ -1133,6 +1240,25 @@ a { text-decoration: none; color: inherit; }
       const block = el('article', 'day-block', [dayHead, slotArea]);
       mount.appendChild(block);
     });
+    if (endSummary.length) {
+      const wrap = el('section', 'plan-summary-block');
+      const head = el('div', 'plan-summary-head', [
+        el('div', null, [
+          el('div', 'plan-summary-title', null, 'Plan summary'),
+          el('div', 'plan-summary-sub', null, 'Transport, stay, budget, and final notes')
+        ])
+      ]);
+      const body = el('div', 'plan-summary-body');
+      groupSummarySections(endSummary).forEach((group) => {
+        body.appendChild(el('div', 'plan-summary-item', [
+          el('div', 'plan-summary-item-title', null, group.title || 'Summary'),
+          el('div', 'plan-summary-item-text', null, group.lines.join('\n'))
+        ]));
+      });
+      wrap.appendChild(head);
+      wrap.appendChild(body);
+      mount.appendChild(wrap);
+    }
   } else {
     mount.appendChild(el('div', 'raw-block', null, cleaned));
   }

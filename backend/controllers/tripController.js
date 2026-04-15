@@ -49,7 +49,9 @@ exports.getTrip = async (req, res, next) => {
         if (!trip || String(trip.userid) !== String(userid)) {
             return res.status(404).json({ error: "Not found" });
         }
+        const user = await User.findbyId(userid);
         res.json({
+            user,
             trip: {
                 ...serializeTripSummary(trip),
                 final_trip_plan: trip.final_trip_plan,
