@@ -152,3 +152,8 @@ exports.trip = async (req, res, next) => {
     }
 };
 
+exports.settings = async (req, res, next) => {
+    const userid = req.params.id;
+    const user = await User.findbyId(userid);
+    res.json({user});
+}

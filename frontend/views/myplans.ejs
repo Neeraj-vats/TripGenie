@@ -567,12 +567,12 @@
       <div class="sidebar-section-label">Main</div>
 
       <!-- Original href preserved -->
-      <a href="/back/<%= userid %>" class="sidebar-link">
+      <a href="/back/<%= encodeURIComponent(userid) %>" class="sidebar-link">
         <span class="link-icon">⊞</span> Dashboard
       </a>
 
       <a href="/myplans/<%= userid %>" class="sidebar-link active">
-        <span class="link-icon">🗂</span> My AI Plans
+        <span class="link-icon">🗂</span> My Trip Plans
       </a>
 
       <a href="#" class="sidebar-link">
@@ -581,7 +581,7 @@
 
       <div class="sidebar-section-label">Account</div>
 
-      <a href="#" class="sidebar-link">
+      <a href="/settings/<%=userid%>" class="sidebar-link">
         <span class="link-icon">⚙</span> Settings
       </a>
 
@@ -594,7 +594,7 @@
       <div class="sidebar-user">
         <div class="user-avatar"><%=user.fname[0]%><%=user.lname[0]%></div>
         <div>
-          <div class="user-info-name"><%= user.fname %> <%= user.lname %></div>
+          <div class="user-info-name"><%= user.fname %>&nbsp;<%= user.lname %></div>
           <div class="user-info-sub"><%= user.email %></div>
         </div>
       </div>

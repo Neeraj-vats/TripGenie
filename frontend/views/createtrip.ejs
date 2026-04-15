@@ -1,181 +1,701 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Create Trip - AI Travel Planner</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Create Trip — TripGenie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
+    :root {
+      --green: #2C5F3F;
+      --green-dark: #1e4530;
+      --green-light: #EDF4EF;
+      --green-border: #C2D9C9;
+      --cream: #F7F5F0;
+      --cream-border: #E8E6E0;
+      --card-bg: #FAFAF8;
+      --text-primary: #1a1a18;
+      --text-muted: #666;
+      --text-hint: #999;
+      --white: #ffffff;
+      --sidebar-bg: #1a2e22;
+      --sidebar-hover: #243d2d;
+      --sidebar-active: #2C5F3F;
+      --sidebar-text: rgba(255,255,255,0.6);
+      --amber: #BA7517;
+      --amber-light: #FAEEDA;
+      --amber-border: #FAC775;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --font-sans: 'DM Sans', system-ui, sans-serif;
+      --radius-sm: 7px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --sidebar-w: 240px;
+      --transition: 0.2s ease;
+    }
 
-body {
-  background: #0f172a;
-  color: white;
-  display: flex;
-  justify-content: center;
-  padding: 40px;
-}
+    html, body {
+      min-height: 100vh;
+      font-family: var(--font-sans);
+      background: var(--cream);
+      color: var(--text-primary);
+      -webkit-font-smoothing: antialiased;
+    }
 
-/* Container */
-.container {
-  width: 800px;
-  background: #1e293b;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-}
+    a { text-decoration: none; color: inherit; }
 
-/* Title */
-.container h1 {
-  margin-bottom: 10px;
-}
+    .dashboard { display: flex; min-height: 100vh; }
 
-.container p {
-  color: #94a3b8;
-  margin-bottom: 25px;
-}
+    /* ─── Sidebar ─── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 0;
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      z-index: 50;
+      transition: transform var(--transition);
+    }
 
-/* Form Layout */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 9px;
+      padding: 0 24px; margin-bottom: 36px;
+      font-size: 16px; font-weight: 600; color: var(--white);
+    }
 
-/* Input Group */
-.input-group {
-  display: flex;
-  flex-direction: column;
-}
+    .sidebar-logo-mark {
+      width: 32px; height: 32px; background: var(--green);
+      border-radius: 8px; display: flex; align-items: center;
+      justify-content: center; font-size: 15px; flex-shrink: 0;
+    }
 
-.input-group label {
-  font-size: 13px;
-  margin-bottom: 5px;
-  color: #cbd5f5;
-}
+    .sidebar-section-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 1.2px;
+      text-transform: uppercase; color: rgba(255,255,255,0.25);
+      padding: 0 24px; margin: 20px 0 8px;
+    }
 
-.input-group input,
-.input-group select,
-.input-group textarea {
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  background: #020617;
-  color: white;
-}
+    .sidebar-nav { flex: 1; display: flex; flex-direction: column; }
 
-/* Full Width */
-.full {
-  grid-column: span 2;
-}
+    .sidebar-link {
+      display: flex; align-items: center; gap: 11px;
+      padding: 10px 24px; font-size: 14px; font-weight: 400;
+      color: var(--sidebar-text);
+      transition: background var(--transition), color var(--transition);
+      position: relative;
+    }
 
-/* Button */
-.btn {
-  margin-top: 20px;
-  width: 100%;
-  padding: 14px;
-  border-radius: 30px;
-  border: none;
-  background: linear-gradient(135deg, #00c6ff, #0072ff);
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.3s;
-}
+    .sidebar-link:hover { background: var(--sidebar-hover); color: var(--white); }
 
-.btn:hover {
-  transform: scale(1.03);
-}
-</style>
+    .sidebar-link.active {
+      background: var(--sidebar-active); color: var(--white); font-weight: 500;
+    }
+
+    .sidebar-link.active::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: rgba(255,255,255,0.6); border-radius: 0 2px 2px 0;
+    }
+
+    .link-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+
+    .sidebar-bottom {
+      padding: 16px 24px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin-top: auto;
+    }
+
+    .sidebar-user { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+
+    .user-avatar {
+      width: 34px; height: 34px; border-radius: 50%; background: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 600; color: var(--white); flex-shrink: 0;
+    }
+
+    .user-info-name { font-size: 13px; font-weight: 500; color: var(--white); }
+    .user-info-sub { font-size: 11px; color: rgba(255,255,255,0.4); }
+
+    .logout-form button {
+      background: none; border: none; color: rgba(255,255,255,0.45);
+      font-size: 13px; font-family: var(--font-sans); cursor: pointer;
+      padding: 0; transition: color var(--transition);
+    }
+
+    .logout-form button:hover { color: rgba(255,255,255,0.8); }
+
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.4); z-index: 40;
+    }
+
+    .sidebar-overlay.show { display: block; }
+
+    .mobile-topbar {
+      display: none; position: sticky; top: 0; z-index: 30;
+      background: var(--white); border-bottom: 1px solid var(--cream-border);
+      padding: 14px 20px; align-items: center; justify-content: space-between;
+    }
+
+    .mobile-topbar-logo {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 15px; font-weight: 600; color: var(--text-primary);
+    }
+
+    .mobile-topbar-logo-mark {
+      width: 28px; height: 28px; background: var(--green);
+      border-radius: 7px; display: flex; align-items: center;
+      justify-content: center; font-size: 13px;
+    }
+
+    .hamburger {
+      background: none; border: none; cursor: pointer;
+      display: flex; flex-direction: column; gap: 4px; padding: 4px;
+    }
+
+    .hamburger span { display: block; width: 20px; height: 1.5px; background: var(--text-primary); border-radius: 2px; }
+
+    /* ─── Main ─── */
+    .main { flex: 1; margin-left: var(--sidebar-w); min-height: 100vh; background: var(--cream); }
+
+    .topbar {
+      background: var(--white); border-bottom: 1px solid var(--cream-border);
+      padding: 18px 36px; display: flex; align-items: center;
+      justify-content: space-between; gap: 16px;
+      position: sticky; top: 0; z-index: 20;
+    }
+
+    .topbar-left h1 {
+      font-family: var(--font-serif); font-size: 22px; font-weight: 400;
+      color: var(--text-primary); letter-spacing: -0.3px;
+    }
+
+    .topbar-left p { font-size: 13px; color: var(--text-hint); margin-top: 2px; }
+
+    .topbar-right { display: flex; gap: 10px; align-items: center; }
+
+    .nav-btn {
+      padding: 8px 16px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500; font-family: var(--font-sans);
+      cursor: pointer; transition: var(--transition);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    .nav-btn-outline {
+      background: transparent; border: 1.5px solid var(--cream-border); color: var(--text-muted);
+    }
+
+    .nav-btn-outline:hover { border-color: var(--green); color: var(--green); }
+
+    /* ─── Content ─── */
+    .content { padding: 32px 36px; }
+
+    /* ─── How it works strip ─── */
+    .how-strip {
+      display: flex; gap: 0;
+      background: var(--white);
+      border: 1px solid var(--cream-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .how-step {
+      flex: 1; padding: 18px 20px;
+      display: flex; align-items: center; gap: 13px;
+      border-right: 1px solid var(--cream-border);
+    }
+
+    .how-step:last-child { border-right: none; }
+
+    .how-num {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--green-light); border: 1px solid var(--green-border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: var(--green);
+      flex-shrink: 0;
+    }
+
+    .how-text strong { display: block; font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+    .how-text span { font-size: 12px; color: var(--text-hint); }
+
+    /* ─── Two-col layout ─── */
+    .page-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* ─── Form card ─── */
+    .form-card {
+      background: var(--white);
+      border: 1px solid var(--cream-border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+    }
+
+    .form-card-title {
+      font-family: var(--font-serif);
+      font-size: 22px; font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+
+    .form-card-sub {
+      font-size: 13px; color: var(--text-muted);
+      margin-bottom: 24px; line-height: 1.55;
+    }
+
+    .form-section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--green);
+      margin-bottom: 14px; margin-top: 24px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--cream-border);
+    }
+
+    .form-section-label:first-of-type { margin-top: 0; }
+
+    /* ─── Form grid (original class preserved) ─── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* ─── Input group (original class preserved) ─── */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-group label {
+      font-size: 13px; font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 7px;
+    }
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+      padding: 11px 14px;
+      border: 1.5px solid var(--cream-border);
+      border-radius: var(--radius-sm);
+      outline: none;
+      font-size: 14px;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      background: var(--card-bg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+    }
+
+    .input-group input::placeholder,
+    .input-group textarea::placeholder { color: var(--text-hint); }
+
+    .input-group input:hover,
+    .input-group select:hover,
+    .input-group textarea:hover { border-color: #D0CEC8; }
+
+    .input-group input:focus,
+    .input-group select:focus,
+    .input-group textarea:focus {
+      border-color: var(--green);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(44,95,63,0.1);
+    }
+
+    .input-group select { appearance: none; cursor: pointer; }
+
+    .input-group textarea { resize: vertical; min-height: 80px; }
+
+    /* ─── Full width (original class preserved) ─── */
+    .full { grid-column: span 2; }
+
+    /* ─── Trip type pills (UI-only, no backend change) ─── */
+    .type-pills {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+
+    .type-pill {
+      padding: 7px 16px;
+      border-radius: 99px;
+      border: 1.5px solid var(--cream-border);
+      background: var(--card-bg);
+      font-size: 13px; font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .type-pill:hover { border-color: var(--green-border); color: var(--green); background: var(--green-light); }
+    .type-pill.selected { border-color: var(--green); color: var(--green); background: var(--green-light); font-weight: 600; }
+
+    /* ─── Budget slider hint ─── */
+    .budget-hint {
+      font-size: 11px; color: var(--text-hint);
+      margin-top: 5px;
+    }
+
+    /* ─── Submit button (original class preserved) ─── */
+    .btn {
+      margin-top: 24px;
+      width: 100%;
+      padding: 13px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: var(--green);
+      color: var(--white);
+      font-size: 15px;
+      font-weight: 500;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      transition: background var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:hover { background: var(--green-dark); }
+    .btn:active { transform: scale(0.99); }
+
+    /* ─── Right sidebar panels ─── */
+    .side-panel {
+      background: var(--white);
+      border: 1px solid var(--cream-border);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+
+    .side-panel:last-child { margin-bottom: 0; }
+
+    .side-panel-title {
+      font-size: 14px; font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .side-panel-title span { font-size: 16px; }
+
+    .tip-item {
+      display: flex; align-items: flex-start;
+      gap: 10px; padding: 9px 0;
+      border-bottom: 1px solid var(--cream-border);
+      font-size: 13px; color: var(--text-muted); line-height: 1.5;
+    }
+
+    .tip-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .tip-item:first-child { padding-top: 0; }
+
+    .tip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 6px; }
+
+    .myplans-link {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 14px;
+      background: var(--green-light);
+      border: 1px solid var(--green-border);
+      border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500; color: var(--green);
+      transition: background var(--transition);
+    }
+
+    .myplans-link:hover { background: #daeee0; }
+
+    .stat-row {
+      display: flex; justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--cream-border);
+      font-size: 13px;
+    }
+
+    .stat-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .stat-row:first-child { padding-top: 0; }
+
+    .stat-row-label { color: var(--text-muted); }
+    .stat-row-val { font-weight: 600; color: var(--text-primary); }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 900px) {
+      .page-grid { grid-template-columns: 1fr; }
+      .how-strip { flex-direction: column; }
+      .how-step { border-right: none; border-bottom: 1px solid var(--cream-border); }
+      .how-step:last-child { border-bottom: none; }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .mobile-topbar { display: flex; }
+      .main { margin-left: 0; }
+      .topbar { display: none; }
+      .content { padding: 20px 16px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .full { grid-column: span 1; }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <h1>Plan Your Trip ✈️   (<%= user.username%>)</h1>
-  <p>Tell us your preferences and let AI create your perfect travel plan</p>
-  <p style="margin-top:8px;font-size:14px;">
-    <a href="/myplans/<%= user._id %>" style="color:#38bdf8;">View your saved AI plans →</a>
-  </p>
+<div class="mobile-topbar">
+  <div class="mobile-topbar-logo">
+    <div class="mobile-topbar-logo-mark">✈</div>
+    TripGenie
+  </div>
+  <button class="hamburger" id="hamburgerBtn">
+    <span></span><span></span><span></span>
+  </button>
+</div>
 
-  <form method="POST" action="/trip">
+<div class="dashboard">
 
-    <input type="hidden" name="userid" value="<%= user._id %>">
+  <!-- ─── Sidebar ─── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">✈</div>
+      TripGenie
+    </div>
 
-    <div class="form-grid">
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Main</div>
 
-      <div class="input-group">
-        <label>Destination</label>
-        <input type="text" name="destination" placeholder="e.g. Manali" required>
+      <a href="/back/<%= user._id%>" class="sidebar-link">
+        <span class="link-icon">⊞</span> Dashboard
+      </a>
+
+      <!-- Original href preserved -->
+      <a href="/myplans/<%= user._id %>" class="sidebar-link">
+        <span class="link-icon">🗂</span> My Trip Plans
+      </a>
+
+      <a href="#" class="sidebar-link active">
+        <span class="link-icon">✈</span> Create Trip
+      </a>
+
+      <a href="#" class="sidebar-link">
+        <span class="link-icon">🗺</span> Explore Destinations
+      </a>
+
+      <div class="sidebar-section-label">Account</div>
+
+      <a href="/settings/<%=user._id%>" class="sidebar-link">
+        <span class="link-icon">⚙</span> Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="user-avatar"><%= user.fname[0].toUpperCase() %><%= user.lname[0].toUpperCase() %></div>
+        <div>
+          <!-- Original EJS preserved -->
+          <div class="user-info-name"><%= user.fname %>&nbsp;<%= user.lname %></div>
+          <div class="user-info-sub"><%= user.email %></div>
+        </div>
+      </div>
+      <form action="/logout" method="GET" class="logout-form">
+        <button type="submit">⇥ &nbsp;Log out</button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- ─── Main ─── -->
+  <div class="main">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Create a new trip</h1>
+        <!-- Original EJS username preserved -->
+        <p>Planning for <strong><%= user.username %></strong> — fill in your preferences below</p>
+      </div>
+      <div class="topbar-right">
+        <!-- Original href preserved -->
+        <a href="/myplans/<%= user._id %>" class="nav-btn nav-btn-outline">🗂 My Plans</a>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- How it works -->
+      <div class="how-strip">
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <div class="how-text">
+            <strong>Fill your preferences</strong>
+            <span>Destination, budget, travel style</span>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <div class="how-text">
+            <strong>AI builds your plan</strong>
+            <span>Day-by-day itinerary in seconds</span>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">3</div>
+          <div class="how-text">
+            <strong>Review & save</strong>
+            <span>Edit, download, or share your plan</span>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">4</div>
+          <div class="how-text">
+            <strong>Travel smarter</strong>
+            <span>Go explore with confidence</span>
+          </div>
+        </div>
       </div>
 
-      <div class="input-group">
-        <label>Number of Days</label>
-        <input type="number" name="days" min="1" placeholder="e.g. 5" required>
-      </div>
+      <div class="page-grid">
 
-      <div class="input-group">
-        <label>Budget (₹)</label>
-        <input type="number" name="budget" placeholder="e.g. 20000" required>
-      </div>
+        <!-- ─── Form card ─── -->
+        <div class="form-card">
+          <h2 class="form-card-title">Plan your perfect trip ✈️</h2>
+          <p class="form-card-sub">Tell us where you're headed and what you love — our AI will handle the rest.</p>
 
-      <div class="input-group">
-        <label>Travel Type</label>
-        <select name="type" required>
-          <option value="">Select</option>
-          <option>Solo</option>
-          <option>Couple</option>
-          <option>Family</option>
-          <option>Friends</option>
-        </select>
-      </div>
+          <!-- Backend logic 100% preserved — action, method, hidden userid, all name attrs -->
+          <form method="POST" action="/trip">
+            <input type="hidden" name="userid" value="<%= user._id %>">
 
-      <div class="input-group">
-        <label>Preferred Transport</label>
-        <select name="transport">
-          <option>Any</option>
-          <option>Flight</option>
-          <option>Train</option>
-          <option>Bus</option>
-          <option>Car</option>
-        </select>
-      </div>
+            <div class="form-section-label">Trip basics</div>
+            <!-- original form-grid class preserved -->
+            <div class="form-grid">
 
-      <div class="input-group">
-        <label>Accommodation Type</label>
-        <select name="stay">
-          <option>Budget</option>
-          <option>Standard</option>
-          <option>Luxury</option>
-        </select>
-      </div>
+              <div class="input-group">
+                <label for="destination">Destination</label>
+                <input type="text" id="destination" name="destination" placeholder="e.g. Manali, Goa, Kerala" required>
+              </div>
 
-      <div class="input-group full">
-        <label>Preferred Activities</label>
-        <input type="text" name="activities" placeholder="e.g. Adventure, Sightseeing, Relaxation">
-      </div>
+              <div class="input-group">
+                <label for="days">Number of days</label>
+                <input type="number" id="days" name="days" min="1" placeholder="e.g. 5" required>
+              </div>
 
-      <div class="input-group full">
-        <label>Additional Preferences</label>
-        <textarea name="extra" rows="3" placeholder="Any special requests or notes..."></textarea>
+              <div class="input-group">
+                <label for="budget">Budget (₹)</label>
+                <input type="number" id="budget" name="budget" placeholder="e.g. 20000" required>
+                <div class="budget-hint">Include accommodation, food & activities</div>
+              </div>
+
+              <div class="input-group">
+                <label for="type">Travel type</label>
+                <select id="type" name="type" required>
+                  <option value="">Select travel type</option>
+                  <option>Solo</option>
+                  <option>Couple</option>
+                  <option>Family</option>
+                  <option>Friends</option>
+                </select>
+              </div>
+
+            </div>
+
+            <div class="form-section-label">Logistics</div>
+            <div class="form-grid">
+
+              <div class="input-group">
+                <label for="transport">Preferred transport</label>
+                <select id="transport" name="transport">
+                  <option>Any</option>
+                  <option>Flight</option>
+                  <option>Train</option>
+                  <option>Bus</option>
+                  <option>Car</option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label for="stay">Accommodation type</label>
+                <select id="stay" name="stay">
+                  <option>Budget</option>
+                  <option>Standard</option>
+                  <option>Luxury</option>
+                </select>
+              </div>
+
+              <!-- original full class preserved -->
+              <div class="input-group full">
+                <label for="activities">Preferred activities</label>
+                <input type="text" id="activities" name="activities" placeholder="e.g. Adventure, Sightseeing, Food trails, Relaxation">
+              </div>
+
+              <div class="input-group full">
+                <label for="extra">Additional preferences</label>
+                <textarea id="extra" name="extra" rows="3" placeholder="Any special requests — dietary needs, accessibility, pet-friendly stays, photography spots..."></textarea>
+              </div>
+
+            </div>
+
+            <!-- original btn class preserved -->
+            <button type="submit" class="btn">✨ Generate my trip plan</button>
+
+          </form>
+        </div>
+
+        <!-- ─── Right panels ─── -->
+        <div>
+
+          <!-- My plans quick link -->
+          <div class="side-panel">
+            <div class="side-panel-title"><span>🗂</span> Your saved plans</div>
+            <a href="/myplans/<%= user._id %>" class="myplans-link">
+              View all AI plans <span>→</span>
+            </a>
+          </div>
+
+          <!-- AI stats -->
+          <div class="side-panel">
+            <div class="side-panel-title"><span>⚡</span> What AI generates</div>
+            <div class="stat-row"><span class="stat-row-label">Day-by-day itinerary</span><span class="stat-row-val">✓</span></div>
+            <div class="stat-row"><span class="stat-row-label">Hotel recommendations</span><span class="stat-row-val">✓</span></div>
+            <div class="stat-row"><span class="stat-row-label">Budget breakdown</span><span class="stat-row-val">✓</span></div>
+            <div class="stat-row"><span class="stat-row-label">Local food spots</span><span class="stat-row-val">✓</span></div>
+            <div class="stat-row"><span class="stat-row-label">Transport routes</span><span class="stat-row-val">✓</span></div>
+            <div class="stat-row"><span class="stat-row-label">Pro travel tips</span><span class="stat-row-val">✓</span></div>
+          </div>
+
+          <!-- Tips -->
+          <div class="side-panel">
+            <div class="side-panel-title"><span>💡</span> Tips for better plans</div>
+            <div class="tip-item"><span class="tip-dot"></span>Be specific with activities — "street food tour" beats "food"</div>
+            <div class="tip-item"><span class="tip-dot"></span>Mention travel pace in preferences — slow, moderate or packed</div>
+            <div class="tip-item"><span class="tip-dot"></span>Include your budget range for more accurate hotel picks</div>
+            <div class="tip-item"><span class="tip-dot"></span>Add special needs — family with kids, senior-friendly, etc.</div>
+          </div>
+
+        </div>
       </div>
 
     </div>
-
-    <button type="submit" class="btn">✨ Generate My Trip</button>
-
-  </form>
-
+  </div>
 </div>
+
+<script>
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const hamburger = document.getElementById('hamburgerBtn');
+
+  function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('show'); }
+  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+
+  if (hamburger) hamburger.addEventListener('click', openSidebar);
+  if (overlay) overlay.addEventListener('click', closeSidebar);
+</script>
 
 </body>
 </html>

@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Settings — TripGenie</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --green:         #2C5F3F;
+  --green-dark:    #1e4530;
+  --green-mid:     #3a7a52;
+  --green-light:   #EDF4EF;
+  --green-border:  #C2D9C9;
+  --cream:         #F7F5F0;
+  --cream-border:  #E8E6E0;
+  --white:         #ffffff;
+  --text-primary:  #1a1a18;
+  --text-muted:    #666;
+  --text-hint:     #999;
+  --sidebar-bg:    #1a2e22;
+  --sidebar-hover: #243d2d;
+  --sidebar-active:#2C5F3F;
+  --sidebar-text:  rgba(255,255,255,0.6);
+  --amber:         #BA7517;
+  --amber-light:   #FAEEDA;
+  --amber-border:  #FAC775;
+  --red:           #C0392B;
+  --red-light:     #FDEDEC;
+  --red-border:    #F1948A;
+  --font-serif:    'DM Serif Display', Georgia, serif;
+  --font-sans:     'DM Sans', system-ui, sans-serif;
+  --radius-sm:     7px;
+  --radius-md:     10px;
+  --radius-lg:     14px;
+  --radius-xl:     18px;
+  --sidebar-w:     240px;
+  --transition:    0.2s ease;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-sans);
+  background: var(--cream);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(44,95,63,0.25); }
+  50%       { box-shadow: 0 0 0 6px rgba(44,95,63,0); }
+}
+
+.fade-up { opacity: 0; animation: fadeUp 0.45s ease forwards; }
+.d1 { animation-delay: 0.04s; }
+.d2 { animation-delay: 0.10s; }
+.d3 { animation-delay: 0.16s; }
+.d4 { animation-delay: 0.22s; }
+.d5 { animation-delay: 0.28s; }
+.d6 { animation-delay: 0.34s; }
+.d7 { animation-delay: 0.40s; }
+.d8 { animation-delay: 0.46s; }
+
+/* ─── Layout ─── */
+.dashboard { display: flex; min-height: 100vh; }
+
+/* ─── Sidebar ─── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar-bg);
+  display: flex; flex-direction: column;
+  padding: 28px 0;
+  position: fixed; top: 0; left: 0;
+  height: 100vh; z-index: 50;
+  transition: transform var(--transition);
+}
+.sidebar-logo {
+  display: flex; align-items: center; gap: 9px;
+  padding: 0 24px; margin-bottom: 36px;
+  font-size: 16px; font-weight: 600; color: var(--white);
+}
+.sidebar-logo-mark {
+  width: 32px; height: 32px; background: var(--green);
+  border-radius: 8px; display: flex; align-items: center;
+  justify-content: center; font-size: 15px; flex-shrink: 0;
+}
+.sidebar-section-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 1.2px;
+  text-transform: uppercase; color: rgba(255,255,255,0.25);
+  padding: 0 24px; margin: 20px 0 8px;
+}
+.sidebar-nav { flex: 1; display: flex; flex-direction: column; }
+.sidebar-link {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 24px; font-size: 14px; font-weight: 400;
+  color: var(--sidebar-text);
+  transition: background var(--transition), color var(--transition);
+  position: relative;
+}
+.sidebar-link:hover { background: var(--sidebar-hover); color: var(--white); }
+.sidebar-link.active { background: var(--sidebar-active); color: var(--white); font-weight: 500; }
+.sidebar-link.active::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: rgba(255,255,255,0.6); border-radius: 0 2px 2px 0;
+}
+.link-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+.sidebar-bottom {
+  padding: 16px 24px; border-top: 1px solid rgba(255,255,255,0.07); margin-top: auto;
+}
+.sidebar-user { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.user-avatar {
+  width: 34px; height: 34px; border-radius: 50%; background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; color: var(--white); flex-shrink: 0;
+}
+.user-info-name { font-size: 13px; font-weight: 500; color: var(--white); }
+.user-info-email { font-size: 11px; color: rgba(255,255,255,0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+.logout-form button {
+  background: none; border: none; color: rgba(255,255,255,0.45);
+  font-size: 13px; font-family: var(--font-sans); cursor: pointer;
+  padding: 0; display: flex; align-items: center; gap: 7px;
+  transition: color var(--transition);
+}
+.logout-form button:hover { color: rgba(255,255,255,0.8); }
+
+/* ─── Mobile ─── */
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 40; }
+.sidebar-overlay.show { display: block; }
+.mobile-topbar {
+  display: none; position: sticky; top: 0; z-index: 30;
+  background: var(--white); border-bottom: 1px solid var(--cream-border);
+  padding: 14px 20px; align-items: center; justify-content: space-between;
+}
+.mobile-topbar-logo { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.mobile-topbar-logo-mark { width: 28px; height: 28px; background: var(--green); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+.hamburger { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 4px; padding: 4px; }
+.hamburger span { display: block; width: 20px; height: 1.5px; background: var(--text-primary); border-radius: 2px; }
+
+/* ─── Main ─── */
+.main { flex: 1; margin-left: var(--sidebar-w); min-height: 100vh; background: var(--cream); }
+
+.topbar {
+  background: var(--white); border-bottom: 1px solid var(--cream-border);
+  padding: 18px 36px; display: flex; align-items: center;
+  justify-content: space-between; gap: 16px;
+  position: sticky; top: 0; z-index: 20;
+}
+.topbar-left h1 {
+  font-family: var(--font-serif); font-size: 22px; font-weight: 400;
+  color: var(--text-primary); letter-spacing: -0.3px;
+}
+.topbar-left p { font-size: 13px; color: var(--text-hint); margin-top: 2px; }
+
+.btn {
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  border: 1px solid var(--cream-border); background: var(--white);
+  color: var(--text-primary); font-size: 13px; font-weight: 500;
+  font-family: var(--font-sans); cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn:hover { background: var(--cream); border-color: var(--green-border); }
+
+.btn-green {
+  background: var(--green); color: var(--white); border-color: var(--green);
+}
+.btn-green:hover { background: var(--green-dark); border-color: var(--green-dark); }
+
+.btn-red {
+  background: var(--red-light); color: var(--red); border-color: var(--red-border);
+}
+.btn-red:hover { background: #fde8e6; }
+
+/* ─── Content ─── */
+.content { padding: 32px 36px; }
+
+/* ─── Settings layout ─── */
+.settings-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ─── Settings nav ─── */
+.settings-nav {
+  background: var(--white); border: 1px solid var(--cream-border);
+  border-radius: var(--radius-lg); overflow: hidden;
+  position: sticky; top: 88px;
+}
+
+.settings-nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 16px; font-size: 13px; font-weight: 400;
+  color: var(--text-muted); cursor: pointer;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid var(--cream-border);
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+.settings-nav-item:last-child { border-bottom: none; }
+.settings-nav-item:hover { background: var(--cream); color: var(--text-primary); }
+.settings-nav-item.active {
+  background: var(--green-light); color: var(--green);
+  font-weight: 600; border-left-color: var(--green);
+}
+.settings-nav-icon { font-size: 15px; flex-shrink: 0; }
+
+/* ─── Section panels ─── */
+.settings-section { display: none; flex-direction: column; gap: 20px; }
+.settings-section.visible { display: flex; }
+
+/* ─── Card ─── */
+.card {
+  background: var(--white); border: 1px solid var(--cream-border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+
+.card-header {
+  padding: 16px 22px; border-bottom: 1px solid var(--cream-border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.card-header-left { display: flex; align-items: center; gap: 10px; }
+.card-header-icon {
+  width: 34px; height: 34px; border-radius: 9px; background: var(--green-light);
+  display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+}
+.card-header-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.card-header-sub   { font-size: 12px; color: var(--text-hint); margin-top: 1px; }
+
+/* ─── Profile avatar row ─── */
+.avatar-row {
+  padding: 24px 22px; display: flex; align-items: center; gap: 20px;
+  border-bottom: 1px solid var(--cream-border); flex-wrap: wrap;
+}
+.avatar-big {
+  width: 72px; height: 72px; border-radius: 50%; background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 600; color: var(--white);
+  flex-shrink: 0; position: relative;
+  animation: pulse-green 3s ease infinite;
+}
+.avatar-big-badge {
+  position: absolute; bottom: 2px; right: 2px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #22c55e; border: 2px solid var(--white);
+}
+.avatar-info h3 { font-size: 18px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+.avatar-info p  { font-size: 13px; color: var(--text-hint); margin-bottom: 10px; }
+.avatar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ─── Form rows ─── */
+.form-body { padding: 4px 0; }
+.form-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  padding: 16px 22px; border-bottom: 1px solid var(--cream-border);
+}
+.form-row.full { grid-template-columns: 1fr; }
+.form-row:last-child { border-bottom: none; }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label {
+  font-size: 12px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.6px;
+}
+.form-input {
+  padding: 9px 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--cream-border); background: var(--cream);
+  font-size: 14px; font-family: var(--font-sans); color: var(--text-primary);
+  transition: border-color var(--transition), background var(--transition);
+  outline: none;
+}
+.form-input:focus { border-color: var(--green); background: var(--white); }
+.form-input::placeholder { color: var(--text-hint); }
+
+.form-select {
+  padding: 9px 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--cream-border); background: var(--cream);
+  font-size: 14px; font-family: var(--font-sans); color: var(--text-primary);
+  cursor: pointer; outline: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+  padding-right: 30px;
+  transition: border-color var(--transition);
+}
+.form-select:focus { border-color: var(--green); }
+
+.form-hint { font-size: 12px; color: var(--text-hint); margin-top: 4px; }
+
+/* ─── Toggle rows ─── */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-bottom: 1px solid var(--cream-border); gap: 16px;
+}
+.toggle-row:last-child { border-bottom: none; }
+.toggle-row:hover { background: var(--cream); }
+
+.toggle-info h4 { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
+.toggle-info p  { font-size: 12px; color: var(--text-hint); line-height: 1.5; }
+
+/* iOS-style toggle */
+.toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-track {
+  position: absolute; inset: 0; border-radius: 999px;
+  background: var(--cream-border); cursor: pointer;
+  transition: background 0.25s ease;
+}
+.toggle-track::after {
+  content: ''; position: absolute;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--white); top: 3px; left: 3px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+  transition: transform 0.25s ease;
+}
+.toggle input:checked + .toggle-track { background: var(--green); }
+.toggle input:checked + .toggle-track::after { transform: translateX(20px); }
+
+/* ─── Preference chips ─── */
+.pref-chips-wrap { padding: 16px 22px; border-bottom: 1px solid var(--cream-border); }
+.pref-chips-wrap:last-child { border-bottom: none; }
+.pref-chips-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+.pref-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pref-chip {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--cream-border); background: var(--cream);
+  font-size: 13px; color: var(--text-muted); cursor: pointer;
+  transition: all var(--transition); user-select: none;
+}
+.pref-chip:hover  { border-color: var(--green-border); color: var(--green); background: var(--green-light); }
+.pref-chip.active { border-color: var(--green); background: var(--green-light); color: var(--green); font-weight: 500; }
+
+/* ─── Budget slider ─── */
+.slider-wrap { padding: 16px 22px; }
+.slider-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+.slider-label  { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.6px; }
+.slider-value  { font-size: 18px; font-weight: 600; color: var(--green); }
+.range-track   { width: 100%; appearance: none; height: 4px; border-radius: 999px; background: var(--cream-border); outline: none; cursor: pointer; }
+.range-track::-webkit-slider-thumb {
+  appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--green); border: 2px solid var(--white);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2); cursor: pointer;
+  transition: transform var(--transition);
+}
+.range-track::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+/* ─── Danger zone ─── */
+.danger-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px; border-bottom: 1px solid var(--cream-border); gap: 16px; flex-wrap: wrap;
+}
+.danger-row:last-child { border-bottom: none; }
+.danger-info h4 { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
+.danger-info p  { font-size: 12px; color: var(--text-hint); }
+
+/* ─── Stats strip ─── */
+.account-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+}
+.acc-stat {
+  background: var(--cream); border: 1px solid var(--cream-border);
+  border-radius: var(--radius-md); padding: 14px 16px;
+  text-align: center; transition: border-color var(--transition);
+}
+.acc-stat:hover { border-color: var(--green-border); }
+.acc-stat-icon  { font-size: 20px; margin-bottom: 6px; }
+.acc-stat-value { font-size: 20px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.5px; }
+.acc-stat-label { font-size: 12px; color: var(--text-hint); margin-top: 2px; }
+
+/* ─── Activity feed ─── */
+.activity-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 22px; border-bottom: 1px solid var(--cream-border);
+  transition: background var(--transition);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-item:hover { background: var(--cream); }
+.activity-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+}
+.dot-green  { background: var(--green); }
+.dot-amber  { background: var(--amber); }
+.dot-muted  { background: var(--cream-border); }
+.activity-text { font-size: 13px; color: var(--text-muted); line-height: 1.5; flex: 1; }
+.activity-text strong { color: var(--text-primary); font-weight: 500; }
+.activity-time { font-size: 11px; color: var(--text-hint); flex-shrink: 0; margin-top: 1px; }
+
+/* ─── Plan badge ─── */
+.plan-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 999px;
+  background: var(--amber-light); color: var(--amber);
+  border: 1px solid var(--amber-border);
+  font-size: 12px; font-weight: 600;
+}
+
+/* ─── Progress bar ─── */
+.storage-bar {
+  height: 6px; border-radius: 99px; background: var(--cream-border); overflow: hidden; margin: 8px 0;
+}
+.storage-fill { height: 100%; background: var(--green); border-radius: 99px; width: 38%; }
+
+/* ─── Connected apps ─── */
+.app-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-bottom: 1px solid var(--cream-border); gap: 12px;
+}
+.app-row:last-child { border-bottom: none; }
+.app-row-left { display: flex; align-items: center; gap: 12px; }
+.app-icon {
+  width: 36px; height: 36px; border-radius: 9px; background: var(--cream);
+  border: 1px solid var(--cream-border); display: flex; align-items: center;
+  justify-content: center; font-size: 18px; flex-shrink: 0;
+}
+.app-name  { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+.app-desc  { font-size: 12px; color: var(--text-hint); }
+.connected-badge {
+  font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px;
+  background: var(--green-light); color: var(--green); border: 1px solid var(--green-border);
+}
+.disconnected-badge {
+  font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px;
+  background: var(--cream); color: var(--text-hint); border: 1px solid var(--cream-border);
+}
+
+/* ─── Toast ─── */
+.toast {
+  position: fixed; left: 50%; bottom: 24px;
+  transform: translateX(-50%);
+  padding: 10px 22px; border-radius: 999px;
+  background: var(--sidebar-bg); color: var(--white);
+  font-size: 13px; font-weight: 500;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 999; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+/* ─── Save bar ─── */
+.save-bar {
+  background: var(--white); border-top: 1px solid var(--cream-border);
+  padding: 14px 22px; display: flex; align-items: center;
+  justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.save-bar-text { font-size: 13px; color: var(--text-hint); }
+.save-bar-actions { display: flex; gap: 10px; }
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .settings-layout { grid-template-columns: 1fr; }
+  .settings-nav { position: static; display: flex; flex-wrap: wrap; overflow: visible; }
+  .settings-nav-item { border-left: none; border-bottom: none; border-bottom: 2px solid transparent; flex: 1; justify-content: center; min-width: 80px; }
+  .settings-nav-item.active { border-bottom-color: var(--green); border-left-color: transparent; }
+  .account-stats { grid-template-columns: repeat(3, 1fr); }
+  .form-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .mobile-topbar { display: flex; }
+  .main { margin-left: 0; }
+  .topbar { display: none; }
+  .content { padding: 20px 16px; }
+  .account-stats { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="mobile-topbar">
+  <div class="mobile-topbar-logo">
+    <div class="mobile-topbar-logo-mark">✈</div>
+    TripGenie
+  </div>
+  <button class="hamburger" id="hamburgerBtn">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<div class="dashboard">
+
+  <!-- ─── Sidebar ─── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-mark">✈</div>
+      TripGenie
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Main</div>
+      <a href="/back/<%= encodeURIComponent(user._id) %>" class="sidebar-link"><span class="link-icon">⊞</span> Dashboard</a>
+      <a href="/myplans/<%= encodeURIComponent(user._id) %>" class="sidebar-link"><span class="link-icon">🗂</span> My Trip Plans</a>
+      <a href="/back/<%= encodeURIComponent(user._id) %>" class="sidebar-link"><span class="link-icon">🗺</span> Explore Destinations</a>
+      <div class="sidebar-section-label">Account</div>
+      <a href="/settings/<%= encodeURIComponent(user._id) %>" class="sidebar-link active"><span class="link-icon">⚙</span> Settings</a>
+      <a href="/settings/<%= encodeURIComponent(user._id) %>#section-account" class="sidebar-link"><span class="link-icon">?</span> Help & Support</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="user-avatar" id="sidebarAvatar"><%=user.fname[0] %><%=user.lname[0] %></div>
+        <div>
+          <div class="user-info-name" id="sidebarName"><%=user.fname%>&nbsp;<%=user.lname%></div>
+          <div class="user-info-email" id="sidebarEmail"><%=user.email %></div>
+        </div>
+      </div>
+      <form action="/logout" method="GET" class="logout-form">
+        <button type="submit">⇥ &nbsp;Log out</button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- ─── Main ─── -->
+  <div class="main">
+
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Settings</h1>
+        <p>Manage your account, preferences, and AI behaviour.</p>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-green" onclick="saveSettings()">✓ Save changes</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <div class="settings-layout fade-up d1">
+
+        <!-- ─── Left nav ─── -->
+        <nav class="settings-nav" id="settingsNav">
+          <div class="settings-nav-item active" data-section="profile">
+            <span class="settings-nav-icon">👤</span> Profile
+          </div>
+          <div class="settings-nav-item" data-section="preferences">
+            <span class="settings-nav-icon">✈</span> Travel prefs
+          </div>
+          <div class="settings-nav-item" data-section="notifications">
+            <span class="settings-nav-icon">🔔</span> Notifications
+          </div>
+          <div class="settings-nav-item" data-section="ai">
+            <span class="settings-nav-icon">🧠</span> AI settings
+          </div>
+          <div class="settings-nav-item" data-section="account">
+            <span class="settings-nav-icon">🛡</span> Account
+          </div>
+          <div class="settings-nav-item" data-section="integrations">
+            <span class="settings-nav-icon">🔗</span> Integrations
+          </div>
+        </nav>
+
+        <!-- ─── Right panels ─── -->
+        <div id="settingsPanels">
+
+          <!-- ══ PROFILE ══ -->
+          <div class="settings-section visible" id="section-profile">
+
+            <div class="card fade-up d2">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">👤</div>
+                  <div>
+                    <div class="card-header-title">Public profile</div>
+                    <div class="card-header-sub">Your name and photo visible across TripGenie</div>
+                  </div>
+                </div>
+                <div class="plan-badge">✦ Free plan</div>
+              </div>
+              <div class="avatar-row">
+                <div class="avatar-big" id="profileAvatar"><%=user.fname[0] %><%=user.lname[0] %>
+                  <div class="avatar-big-badge"></div>
+                </div>
+                <div class="avatar-info">
+                  <h3 id="displayName"><%=user.fname%>&nbsp;<%=user.lname%></h3>
+                  <p id="displayEmail"><%=user.email %></p>
+                  <div class="avatar-actions">
+                    <button class="btn" onclick="showToast('Photo upload coming soon!')">📷 Change photo</button>
+                    <button class="btn" onclick="showToast('Initials updated!')">✎ Use initials</button>
+                  </div>
+                </div>
+              </div>
+              <div class="form-body">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">First name</label>
+                    <input class="form-input" id="fname" type="text" value="<%=user.fname %>" placeholder="First name">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Last name</label>
+                    <input class="form-input" id="lname" type="text" value="<%=user.lname %>" placeholder="Last name">
+                  </div>
+                </div>
+                <div class="form-row full">
+                  <div class="form-group">
+                    <label class="form-label">Email address</label>
+                    <input class="form-input" id="email" type="email" value="<%=user.email %>" placeholder="your@email.com">
+                    <span class="form-hint">Used for plan exports and notifications</span>
+                  </div>
+                </div>
+                <div class="form-row full">
+                  <div class="form-group">
+                    <label class="form-label">Phone number</label>
+                    <input class="form-input" type="tel" value="" placeholder="+91 XXXXX XXXXX">
+                    <span class="form-hint">Optional — for trip reminders via SMS</span>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">City / home base</label>
+                    <input class="form-input" type="text" value="Mumbai" placeholder="Your city">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Language</label>
+                    <select class="form-select">
+                      <option selected>English</option>
+                      <option>Hindi</option>
+                      <option>Tamil</option>
+                      <option>Telugu</option>
+                      <option>Marathi</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="save-bar">
+                <span class="save-bar-text">Changes are saved locally until you click Save</span>
+                <div class="save-bar-actions">
+                  <button class="btn" onclick="resetForm()">Discard</button>
+                  <button class="btn btn-green" onclick="saveSettings()">Save changes</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card fade-up d3">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">🔐</div>
+                  <div>
+                    <div class="card-header-title">Password & security</div>
+                    <div class="card-header-sub">Keep your account safe</div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-body">
+                <div class="form-row full">
+                  <div class="form-group">
+                    <label class="form-label">Current password</label>
+                    <input class="form-input" type="password" placeholder="Enter current password">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">New password</label>
+                    <input class="form-input" type="password" placeholder="Min. 8 characters">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Confirm new password</label>
+                    <input class="form-input" type="password" placeholder="Repeat new password">
+                  </div>
+                </div>
+              </div>
+              <div class="save-bar">
+                <span class="save-bar-text">Password must be at least 8 characters</span>
+                <div class="save-bar-actions">
+                  <button class="btn btn-green" onclick="showToast('Password updated successfully ✓')">Update password</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ══ TRAVEL PREFERENCES ══ -->
+          <div class="settings-section" id="section-preferences">
+
+            <div class="card fade-up d2">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">✈</div>
+                  <div>
+                    <div class="card-header-title">Travel style</div>
+                    <div class="card-header-sub">TripGenie uses these to personalise every plan</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pref-chips-wrap">
+                <div class="pref-chips-label">Trip types you enjoy</div>
+                <div class="pref-chips">
+                  <span class="pref-chip active">🏔 Adventure</span>
+                  <span class="pref-chip active">🌿 Nature</span>
+                  <span class="pref-chip">🏖 Beach</span>
+                  <span class="pref-chip">🕌 Culture</span>
+                  <span class="pref-chip">🍜 Food & drink</span>
+                  <span class="pref-chip active">🛕 Heritage</span>
+                  <span class="pref-chip">🛍 Shopping</span>
+                  <span class="pref-chip">💆 Wellness</span>
+                  <span class="pref-chip">🎉 Nightlife</span>
+                  <span class="pref-chip">💼 Business</span>
+                </div>
+              </div>
+
+              <div class="pref-chips-wrap">
+                <div class="pref-chips-label">Preferred stay type</div>
+                <div class="pref-chips">
+                  <span class="pref-chip active">🏨 Hotel</span>
+                  <span class="pref-chip">🏕 Camping</span>
+                  <span class="pref-chip">🏠 Homestay</span>
+                  <span class="pref-chip">🛎 Resort</span>
+                  <span class="pref-chip">🎒 Hostel</span>
+                  <span class="pref-chip">🏡 Airbnb</span>
+                </div>
+              </div>
+
+              <div class="pref-chips-wrap">
+                <div class="pref-chips-label">Preferred transport</div>
+                <div class="pref-chips">
+                  <span class="pref-chip active">🚗 Car / cab</span>
+                  <span class="pref-chip active">🚆 Train</span>
+                  <span class="pref-chip">✈ Flight</span>
+                  <span class="pref-chip">🚌 Bus</span>
+                  <span class="pref-chip">🏍 Bike rental</span>
+                </div>
+              </div>
+
+              <div class="pref-chips-wrap" style="border-bottom:none;">
+                <div class="pref-chips-label">Dietary preferences</div>
+                <div class="pref-chips">
+                  <span class="pref-chip active">🥗 Vegetarian</span>
+                  <span class="pref-chip">🌱 Vegan</span>
+                  <span class="pref-chip">🍗 Non-veg</span>
+                  <span class="pref-chip">🥜 Jain</span>
+                  <span class="pref-chip">🌾 Gluten-free</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card fade-up d3">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">💰</div>
+                  <div>
+                    <div class="card-header-title">Default budget range</div>
+                    <div class="card-header-sub">Pre-fills your trip planner every time</div>
+                  </div>
+                </div>
+              </div>
+              <div class="slider-wrap">
+                <div class="slider-header">
+                  <span class="slider-label">Per-trip budget</span>
+                  <span class="slider-value" id="budgetVal">₹15,000</span>
+                </div>
+                <input class="range-track" type="range" min="2000" max="200000" step="1000" value="15000" id="budgetSlider">
+                <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                  <span style="font-size:11px;color:var(--text-hint);">₹2,000</span>
+                  <span style="font-size:11px;color:var(--text-hint);">₹2,00,000</span>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Default trip duration</label>
+                  <select class="form-select">
+                    <option>2 days (weekend)</option>
+                    <option selected>3–5 days</option>
+                    <option>1 week</option>
+                    <option>2 weeks</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Travel companions</label>
+                  <select class="form-select">
+                    <option>Solo</option>
+                    <option selected>Couple</option>
+                    <option>Family</option>
+                    <option>Group (4+)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ══ NOTIFICATIONS ══ -->
+          <div class="settings-section" id="section-notifications">
+
+            <div class="card fade-up d2">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">📧</div>
+                  <div>
+                    <div class="card-header-title">Email notifications</div>
+                    <div class="card-header-sub">Choose what TripGenie emails you about</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Trip plan ready</h4>
+                  <p>Email when your AI itinerary finishes generating</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Trip reminders</h4>
+                  <p>3-day and 1-day reminder before each upcoming trip</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Budget alerts</h4>
+                  <p>When a trip plan approaches your set budget limit</p>
+                </div>
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Destination tips</h4>
+                  <p>Weekly travel inspiration and destination highlights</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Product updates</h4>
+                  <p>New features, improvements, and release notes</p>
+                </div>
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span></label>
+              </div>
+            </div>
+
+            <div class="card fade-up d3">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">📱</div>
+                  <div>
+                    <div class="card-header-title">Push & SMS notifications</div>
+                    <div class="card-header-sub">Real-time alerts on your device</div>
+                  </div>
+                </div>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Push notifications</h4>
+                  <p>Browser push alerts for plan updates</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>SMS trip reminders</h4>
+                  <p>Text message reminders to your registered number</p>
+                </div>
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Promotional messages</h4>
+                  <p>Deals, offers, and partnership discounts</p>
+                </div>
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span></label>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ══ AI SETTINGS ══ -->
+          <div class="settings-section" id="section-ai">
+
+            <div class="card fade-up d2">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">🧠</div>
+                  <div>
+                    <div class="card-header-title">AI plan behaviour</div>
+                    <div class="card-header-sub">Control how TripGenie generates your itineraries</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pref-chips-wrap">
+                <div class="pref-chips-label">Plan detail level</div>
+                <div class="pref-chips">
+                  <span class="pref-chip">🗒 Brief overview</span>
+                  <span class="pref-chip active">📋 Detailed with timings</span>
+                  <span class="pref-chip">📚 Full guide + tips</span>
+                </div>
+              </div>
+
+              <div class="pref-chips-wrap">
+                <div class="pref-chips-label">Tone of recommendations</div>
+                <div class="pref-chips">
+                  <span class="pref-chip active">🎯 Concise & practical</span>
+                  <span class="pref-chip">✍ Descriptive & immersive</span>
+                  <span class="pref-chip">📊 Structured & bullet-based</span>
+                </div>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Include estimated costs per activity</h4>
+                  <p>AI adds approximate ₹ costs alongside each recommendation</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Include local food recommendations</h4>
+                  <p>Add restaurant and street food picks for each destination</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Include transport tips between spots</h4>
+                  <p>AI suggests how to get between each activity</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Weather-aware planning</h4>
+                  <p>AI factors in seasonal weather when building your itinerary</p>
+                </div>
+                <label class="toggle"><input type="checkbox"><span class="toggle-track"></span></label>
+              </div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <h4>Learn from past trips</h4>
+                  <p>Use your completed plans to improve future recommendations</p>
+                </div>
+                <label class="toggle"><input type="checkbox" checked><span class="toggle-track"></span></label>
+              </div>
+            </div>
+
+            <div class="card fade-up d3">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">🚫</div>
+                  <div>
+                    <div class="card-header-title">Avoid list</div>
+                    <div class="card-header-sub">Tell the AI what to skip in all your plans</div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row full" style="border-bottom:none;">
+                <div class="form-group">
+                  <label class="form-label">Places or activities to always avoid</label>
+                  <textarea class="form-input" style="height:80px;resize:none;line-height:1.6;" placeholder="e.g. nightclubs, extreme sports, very crowded tourist spots..."></textarea>
+                  <span class="form-hint">Separate with commas. AI will exclude these from all future plans.</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ══ ACCOUNT ══ -->
+          <div class="settings-section" id="section-account">
+
+            <div class="card fade-up d2">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">📊</div>
+                  <div>
+                    <div class="card-header-title">Account overview</div>
+                    <div class="card-header-sub">Your TripGenie usage at a glance</div>
+                  </div>
+                </div>
+                <div class="plan-badge">✦ Free plan</div>
+              </div>
+              <div style="padding:20px 22px; border-bottom:1px solid var(--cream-border);">
+                <div class="account-stats">
+                  <div class="acc-stat">
+                    <div class="acc-stat-icon">✈</div>
+                    <div class="acc-stat-value">12</div>
+                    <div class="acc-stat-label">Trips created</div>
+                  </div>
+                  <div class="acc-stat">
+                    <div class="acc-stat-icon">🌍</div>
+                    <div class="acc-stat-value">8</div>
+                    <div class="acc-stat-label">Destinations</div>
+                  </div>
+                  <div class="acc-stat">
+                    <div class="acc-stat-icon">📅</div>
+                    <div class="acc-stat-value">34</div>
+                    <div class="acc-stat-label">Days planned</div>
+                  </div>
+                </div>
+              </div>
+              <div style="padding:16px 22px; border-bottom:1px solid var(--cream-border);">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+                  <span style="font-size:13px;font-weight:500;color:var(--text-primary);">Plan storage used</span>
+                  <span style="font-size:13px;color:var(--text-hint);">4 of 10 plans</span>
+                </div>
+                <div class="storage-bar"><div class="storage-fill"></div></div>
+                <span style="font-size:12px;color:var(--text-hint);">Upgrade to Pro for unlimited plan storage</span>
+              </div>
+              <div style="padding:16px 22px;">
+                <button class="btn btn-green" style="width:100%;justify-content:center;padding:12px;" onclick="showToast('Upgrade flow coming soon!')">
+                  ✦ Upgrade to Pro — unlock unlimited plans
+                </button>
+              </div>
+            </div>
+
+            <div class="card fade-up d3">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">🕐</div>
+                  <div>
+                    <div class="card-header-title">Recent activity</div>
+                    <div class="card-header-sub">Your last 6 actions on TripGenie</div>
+                  </div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot dot-green"></div>
+                <div class="activity-text">Generated AI plan for <strong>Manali Trip</strong> (5 days, ₹20,000)</div>
+                <div class="activity-time">2h ago</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot dot-amber"></div>
+                <div class="activity-text">Updated budget for <strong>Goa Trip</strong> from ₹12,000 to ₹15,000</div>
+                <div class="activity-time">Yesterday</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot dot-green"></div>
+                <div class="activity-text">Created new plan for <strong>Coorg Retreat</strong></div>
+                <div class="activity-time">3 days ago</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot dot-muted"></div>
+                <div class="activity-text">Marked <strong>Jaipur Weekend</strong> as completed</div>
+                <div class="activity-time">1 week ago</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot dot-green"></div>
+                <div class="activity-text">Generated AI plan for <strong>Mumbai City Break</strong></div>
+                <div class="activity-time">2 weeks ago</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot dot-muted"></div>
+                <div class="activity-text">Account created and first plan generated</div>
+                <div class="activity-time">Jan 2024</div>
+              </div>
+            </div>
+
+            <div class="card fade-up d4" style="border-color:var(--red-border);">
+              <div class="card-header" style="background:#fff9f9;">
+                <div class="card-header-left">
+                  <div class="card-header-icon" style="background:var(--red-light);">⚠️</div>
+                  <div>
+                    <div class="card-header-title" style="color:var(--red);">Danger zone</div>
+                    <div class="card-header-sub">Irreversible actions — proceed with caution</div>
+                  </div>
+                </div>
+              </div>
+              <div class="danger-row">
+                <div class="danger-info">
+                  <h4>Export all my data</h4>
+                  <p>Download a ZIP of all your plans, preferences, and account data</p>
+                </div>
+                <button class="btn" onclick="showToast('Data export will be emailed to you shortly')">📦 Export data</button>
+              </div>
+              <div class="danger-row">
+                <div class="danger-info">
+                  <h4>Clear all trip plans</h4>
+                  <p>Permanently delete all your saved itineraries — cannot be undone</p>
+                </div>
+                <button class="btn btn-red" onclick="confirmAction('clear-plans')">🗑 Clear all plans</button>
+              </div>
+              <div class="danger-row">
+                <div class="danger-info">
+                  <h4>Delete account</h4>
+                  <p>Permanently remove your account and all associated data</p>
+                </div>
+                <button class="btn btn-red" onclick="confirmAction('delete-account')">✕ Delete account</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ══ INTEGRATIONS ══ -->
+          <div class="settings-section" id="section-integrations">
+
+            <div class="card fade-up d2">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">🔗</div>
+                  <div>
+                    <div class="card-header-title">Connected apps</div>
+                    <div class="card-header-sub">Link external services for a richer travel experience</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="app-row">
+                <div class="app-row-left">
+                  <div class="app-icon">📅</div>
+                  <div>
+                    <div class="app-name">Google Calendar</div>
+                    <div class="app-desc">Sync trip dates automatically to your calendar</div>
+                  </div>
+                </div>
+                <span class="connected-badge">✓ Connected</span>
+              </div>
+              <div class="app-row">
+                <div class="app-row-left">
+                  <div class="app-icon">🗺</div>
+                  <div>
+                    <div class="app-name">Google Maps</div>
+                    <div class="app-desc">Open itinerary locations directly in Maps</div>
+                  </div>
+                </div>
+                <span class="connected-badge">✓ Connected</span>
+              </div>
+              <div class="app-row">
+                <div class="app-row-left">
+                  <div class="app-icon">📸</div>
+                  <div>
+                    <div class="app-name">Google Photos</div>
+                    <div class="app-desc">Attach trip memories to completed plans</div>
+                  </div>
+                </div>
+                <button class="btn" onclick="showToast('Google Photos integration coming soon!')">Connect</button>
+              </div>
+              <div class="app-row">
+                <div class="app-row-left">
+                  <div class="app-icon">✉️</div>
+                  <div>
+                    <div class="app-name">WhatsApp</div>
+                    <div class="app-desc">Share trip itineraries via WhatsApp in one tap</div>
+                  </div>
+                </div>
+                <button class="btn" onclick="showToast('WhatsApp share integration coming soon!')">Connect</button>
+              </div>
+              <div class="app-row">
+                <div class="app-row-left">
+                  <div class="app-icon">💳</div>
+                  <div>
+                    <div class="app-name">UPI / payment tracker</div>
+                    <div class="app-desc">Track actual trip spend vs. planned budget</div>
+                  </div>
+                </div>
+                <button class="btn" onclick="showToast('Payment tracking coming soon!')">Connect</button>
+              </div>
+            </div>
+
+            <div class="card fade-up d3">
+              <div class="card-header">
+                <div class="card-header-left">
+                  <div class="card-header-icon">🔑</div>
+                  <div>
+                    <div class="card-header-title">API access</div>
+                    <div class="card-header-sub">Programmatic access to your TripGenie plans</div>
+                  </div>
+                </div>
+                <div class="plan-badge">✦ Pro only</div>
+              </div>
+              <div style="padding:20px 22px;">
+                <p style="font-size:13px;color:var(--text-hint);line-height:1.7;margin-bottom:16px;">Upgrade to Pro to generate an API key and access your trip plans programmatically. Build custom apps, integrations, and automations on top of TripGenie.</p>
+                <button class="btn btn-green" onclick="showToast('Upgrade to unlock API access!')">✦ Upgrade to Pro</button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+
+  /* ── Sidebar mobile ── */
+  const sidebar   = document.getElementById('sidebar');
+  const overlay   = document.getElementById('sidebarOverlay');
+  const hamburger = document.getElementById('hamburgerBtn');
+  if (hamburger) hamburger.addEventListener('click', () => { sidebar.classList.add('open'); overlay.classList.add('show'); });
+  if (overlay)   overlay.addEventListener('click',   () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); });
+
+  /* ── Toast ── */
+  const toastEl = document.getElementById('toast');
+  window.showToast = function(msg) {
+    if (!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toastEl.classList.remove('show'), 2000);
+  };
+
+  /* ── Settings nav ── */
+  const navItems = document.querySelectorAll('.settings-nav-item');
+  const sections = document.querySelectorAll('.settings-section');
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      navItems.forEach(n => n.classList.remove('active'));
+      sections.forEach(s => s.classList.remove('visible'));
+      item.classList.add('active');
+      const target = document.getElementById('section-' + item.dataset.section);
+      if (target) target.classList.add('visible');
+    });
+  });
+
+  /* ── Pref chips toggle ── */
+  document.querySelectorAll('.pref-chip').forEach(chip => {
+    chip.addEventListener('click', () => chip.classList.toggle('active'));
+  });
+
+  /* ── Budget slider ── */
+  const slider   = document.getElementById('budgetSlider');
+  const budgetLbl= document.getElementById('budgetVal');
+  if (slider && budgetLbl) {
+    slider.addEventListener('input', () => {
+      const v = parseInt(slider.value, 10);
+      budgetLbl.textContent = '₹' + v.toLocaleString('en-IN');
+    });
+  }
+
+  /* ── Live profile update ── */
+  function updateProfile() {
+    const fn = document.getElementById('fname')?.value || '';
+    const ln = document.getElementById('lname')?.value || '';
+    const em = document.getElementById('email')?.value || '';
+    const full = (fn + ' ' + ln).trim();
+    const initials = ((fn[0] || '') + (ln[0] || '')).toUpperCase() || 'U';
+    if (document.getElementById('displayName'))  document.getElementById('displayName').textContent  = full || 'Your Name';
+    if (document.getElementById('displayEmail')) document.getElementById('displayEmail').textContent = em || 'your@email.com';
+    if (document.getElementById('profileAvatar')) document.getElementById('profileAvatar').childNodes[0].textContent = initials;
+    if (document.getElementById('sidebarAvatar')) document.getElementById('sidebarAvatar').textContent = initials;
+    if (document.getElementById('sidebarName'))   document.getElementById('sidebarName').textContent  = full || 'Your Name';
+    if (document.getElementById('sidebarEmail'))  document.getElementById('sidebarEmail').textContent = em;
+  }
+  ['fname','lname','email'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateProfile);
+  });
+
+  /* ── Save ── */
+  window.saveSettings = function () {
+    updateProfile();
+    showToast('Settings saved successfully ✓');
+  };
+
+  window.resetForm = function () {
+    ['fname','lname','email'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = el.defaultValue;
+    });
+    updateProfile();
+    showToast('Changes discarded');
+  };
+
+  /* ── Danger confirm ── */
+  window.confirmAction = function (action) {
+    if (action === 'delete-account') {
+      if (confirm('Are you sure you want to permanently delete your account? This cannot be undone.')) {
+        showToast('Account deletion initiated — check your email');
+      }
+    } else if (action === 'clear-plans') {
+      if (confirm('Delete ALL your saved trip plans? This cannot be undone.')) {
+        showToast('All trip plans cleared');
+      }
+    }
+  };
+
+})();
+</script>
+</body>
+</html>

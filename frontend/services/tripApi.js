@@ -38,6 +38,17 @@ exports.listTrips = async (userid) => {
     return result.trips || [];
 };
 
+exports.getTripsAndUser = async (userid) => {
+    const response = await fetch(
+        `http://localhost:2376/api/trips/${encodeURIComponent(userid)}`
+    );
+    const result = await response.json();
+    return {
+        trips: result.trips || [],
+        user: result.user || null,
+    };
+};
+
 exports.getTrip = async (tripId, userid) => {
     const q = new URLSearchParams({ userid: String(userid) });
     const response = await fetch(
@@ -63,3 +74,12 @@ exports.deleteTrip = async (tripId, userid) => {
         ...result,
     };
 };
+
+exports.settings = async (id) => {
+    const response = await fetch(`http://localhost:2376/api/settings/${id}`, {
+        method: "GET"
+    });
+
+    const result = await response.json();
+    return result;
+}

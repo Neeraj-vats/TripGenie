@@ -230,7 +230,7 @@ app.get("/back/:id", async (req, res, next) => {
     try {
         const userid = req.params.id;
         console.log("user id for home navigation", userid);
-        const result = await tripServices.gettripinput({ userid });
+        const result = await tripServices.getTripsAndUser(userid);
         if (!result || !result.user) {
             return res.status(404).send("User not found.");
         }
@@ -240,6 +240,12 @@ app.get("/back/:id", async (req, res, next) => {
         return res.status(500).send("Could not load home page.");
     }
 });
+
+app.get("/settings/:id", async (req, res, next) => {
+    const userid = req.params.id;
+    const result = await tripServices.settings(userid);
+    res.render("setting", {user: result.user});
+})
 
 const PORT = 9876;
 app.listen(PORT, () => {
